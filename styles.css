@@ -1,0 +1,10 @@
+body{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#display>*{
+    border: 1px dashed black;
+}
