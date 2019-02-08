@@ -39,7 +39,7 @@ function test() {
 	PIXI.loader.add('images', 'resources/images/sprites.json').load(setup);
 
 	function setup2() {
-		for (var i = 0; i < 1200; i++) {
+		for (var i = 0; i < 430; i++) {
 			let star2;
 			if (i % 2 === 0) {
 				star2 = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 1);
@@ -47,7 +47,6 @@ function test() {
 			else {
 				star2 = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 10);
 			}
-
 			star2.position.set(app.randomNumber(1, 800), app.randomNumber(1, 600));
 			star2.scale.set(0.01);
 			app.gameArea.stage.addChild(star2);
@@ -118,7 +117,6 @@ function test() {
 
 function addEnemies() {
 	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
-
 	enemy.scale.set(0.15, 0.15);
 	enemy.anchor.set(0.5);
 	enemy.hitArea = new PIXI.Rectangle(enemy.x, enemy.y, 69.6, 75.89999);
@@ -134,8 +132,20 @@ function detectCollision(obj1: Character, obj2: Character) {
 		window.removeEventListener('keydown', keyDownHandler);
 		app.gameArea.ticker.stop();
 		obj1.scale.set(0.15, 0.15);
+		/* for (let i = 0; i < obj1.width; i++) {
+
+			for(let j = 0; j < obj1.height; i++)	{
+				let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
+				particle.scale.set(0.002);
+				particle.tint = 0xFFFF00;
+				particle.position.set(obj1.) 
+			}
+		} */
 		obj1.texture = PIXI.Texture.fromImage('resources/images/circle.png');
 		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png');
+		debugger;
+		console.log(obj1);
+		
 	}
 }
 
