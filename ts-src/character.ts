@@ -7,12 +7,4 @@ export default class Character extends Sprite{
     
     public velocityX: number;
     public velocityY: number;
-
-/*     private initCharacter(url: string): void{
-        PIXI.loader.add(url).load(this.setup);
-    }
-
-    private setup(url: string): void{
-        this.newCharacter = new Sprite(PIXI.loader.resources[url].texture);
-    } */
 }
