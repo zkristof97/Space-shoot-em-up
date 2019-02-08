@@ -15,20 +15,52 @@ let message = new PIXI.Text('Score: 0');
 message.style = new PIXI.TextStyle({
 	fill: 0xFFFFFF
 });
-message.position.set(10,10);
-app.gameArea.stage.addChild(message);
+
+let stars: Star[] = new Array();
 
 for (let i = 0; i < a.length; i++) {
 	a[i].addEventListener('click', test);
+}
+
+
+class Star extends PIXI.Sprite{
+	constructor(texture, givenSpeed){
+		super(texture)
+		this.speed = givenSpeed;
+	}
+
+	public speed: number;
+	
 }
 
 function test() {
 	document.getElementById('display').innerHTML = null;
 	document.getElementById('display').appendChild(app.gameArea.view);
 
+	message.position.set(10,10);
+	app.gameArea.stage.addChild(message);
+
 	PIXI.loader.add('images', 'resources/images/sprites.json').load(setup);
 
+	function setup2(){
+		for(var i = 0; i < 1200; i++){
+			let star2;
+			if(i % 2 === 0){
+				star2 = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 1);
+			}
+			else{
+				star2 = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 10);
+			}
+			
+			star2.position.set(app.randomNumber(1, 800), app.randomNumber(1, 600));
+			star2.scale.set(0.01);
+			app.gameArea.stage.addChild(star2);
+			stars.push(star2);
+		}
+	}
+
 	function setup() {
+		PIXI.loader.add('resources/images/circle.png').load(setup2); 
 
 		window.addEventListener('keydown', keyDownHandler);
 		window.addEventListener('keyup', keyUpHandler);
@@ -70,10 +102,24 @@ function test() {
 				for (let k = 0; k < enemies.length; k++) {
 					checkTargetHit(missles[j], enemies[k]);
 				}
-			}
+			} 
+
+			for (let i = 0; i < stars.length; i++) {
+				let currentStar: Star = stars[i];
+				currentStar.x -= 1;
+				
+				if(currentStar.x < 0){
+					currentStar.x *= -currentStar.speed;   
+					currentStar.x += app.gameArea.view.width;
+					currentStar.y = app.randomNumber(1,600);
+				} 
+			}  
 		});
 	}
 }
+
+
+
 
 function addEnemies() {
 	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
@@ -124,7 +170,6 @@ function shoot() {
 	missle.position.set(foo.x, foo.y);
 	missles.push(missle);
 }
-
 
 function keyDownHandler(e: any): void {
 	switch (e.keyCode) {
