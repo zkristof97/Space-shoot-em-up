@@ -1,5 +1,6 @@
 import Application from './application';
 import Character from './Character';
+import { Sprite } from 'pixi.js';
 
 let score: number = 0;
 let missles: Character[] = new Array();
@@ -141,10 +142,12 @@ function detectCollision(obj1: Character, obj2: Character) {
 				particle.position.set(obj1.) 
 			}
 		} */
-		obj1.texture = PIXI.Texture.fromImage('resources/images/circle.png');
+		/* obj1.texture = PIXI.Texture.fromImage('resources/images/circle.png');
 		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png');
 		debugger;
-		console.log(obj1);
+		console.log(obj1); */
+
+		drawParticles();
 		
 	}
 }
@@ -212,4 +215,36 @@ function keyUpHandler(e: any): void {
 			player.velocityY = 0;
 			break;
 	}
+}
+
+function drawParticles(){
+
+	let particleContainer = new PIXI.particles.ParticleContainer(40, {
+		scale: true,
+		position: true,
+		rotation: true,
+		uvs: true,
+		alpha: true
+	});
+
+	particleContainer.pivot.set(0.5,0.5);
+	particleContainer.position.set(app.gameArea.view.width / 2, app.gameArea.view.height / 2);
+
+	app.gameArea.stage.addChild(particleContainer);
+
+	let circle = new PIXI.Graphics().beginFill(0x928374).drawCircle(0,0,20).endFill();
+	let texture: PIXI.Texture = circle.generateCanvasTexture();
+
+	for(let i = 0; i < 8; i++){
+		for(let j = 300; j >= 0; j--){
+			if(j % 10 === 0){
+				let particle = new Sprite(texture);
+				particle.position.set(j, i + 5);
+				particleContainer.addChild(particle);
+			}
+		}
+	}
+
+	
+
 }
