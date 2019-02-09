@@ -56,7 +56,7 @@ function test() {
 	}
 
 	function setup() {
-		PIXI.loader.add('resources/images/circle.png').load(setup2);
+		/* PIXI.loader.add('resources/images/circle.png').load(setup2); */
 
 		window.addEventListener('keydown', keyDownHandler);
 		window.addEventListener('keyup', keyUpHandler);
@@ -68,31 +68,48 @@ function test() {
 
 		player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
 		player.position.set(75, app.gameArea.view.height / 2);
+		/* player.anchor.set(0.5); */
+		
+		/* player.texture =  new PIXI.Graphics().beginFill(0xFFFFF).drawRect(player.x, player.y, 60, 20).endFill().generateCanvasTexture();
 
-		player.anchor.set(0.5);
-		player.hitArea = new PIXI.Rectangle(player.x, player.y, 75, 75);
+		player.hitArea = new PIXI.Rectangle(player.x, player.y, 60, 20); */
+		
 		player.velocityX = 0;
 		player.velocityY = 0;
 
 		app.gameArea.stage.addChild(player);
 
-		setInterval(() => {
+		addEnemies();
+		enemies[0].position.set(200,200);
+		enemies[0].hitArea = new PIXI.Rectangle(0, 0, 70, 40); 
+		
+		
+
+		/* let rect = new PIXI.Graphics().beginFill(0xFFFFF).drawRect(200, 200, 60, 10).endFill();
+		rect.hitArea = new PIXI.Rectangle(200, 200, 60, 10); 
+
+		app.gameArea.stage.addChild(rect); */
+
+		/* setInterval(() => {
 			addEnemies();
-		}, 2000);
+		}, 2000); */
 
 		app.gameArea.ticker.add(() => {
 			player.x += player.velocityX;
 			player.y += player.velocityY;
 
-			for (let i = enemies.length - 1; i >= 0; i--) {
+			detectCollision(player, enemies[0]);
+			/* for (let i = enemies.length - 1; i >= 0; i--) {
 				enemies[i].x -= 4;
-				enemies[i].y += app.randomNumber(-2, 2);
+				enemies[i].y += app.randomNumber(-2, 2); 
 
 				detectCollision(player, enemies[i]);
-			}
+			} */
 
 			for (let i = missles.length - 1; i >= 0; i--) {
-				missles[i].x += 10;
+				let currentMissle: Character = missles[i];
+				currentMissle.x += 10;
+				/* currentMissle.hitArea = new PIXI.Rectangle(currentMissle.x, currentMissle.y, 20, 12); */
 			}
 
 			for (let j = 0; j < missles.length; j++) {
@@ -119,8 +136,7 @@ function test() {
 function addEnemies() {
 	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
 	enemy.scale.set(0.15, 0.15);
-	enemy.anchor.set(0.5);
-	enemy.hitArea = new PIXI.Rectangle(enemy.x, enemy.y, 69.6, 75.89999);
+	/* enemy.anchor.set(0.5); */
 	enemy.position.set(app.gameArea.view.width, app.randomNumber(enemy.height, 600 - enemy.height));
 
 	app.gameArea.stage.addChild(enemy);
@@ -128,11 +144,17 @@ function addEnemies() {
 }
 
 
-function detectCollision(obj1: Character, obj2: Character) {
-	if (isCollide(obj1, obj2)) {
-		window.removeEventListener('keydown', keyDownHandler);
-		app.gameArea.ticker.stop();
-		obj1.scale.set(0.15, 0.15);
+function detectCollision(player: any, enemy: any) {
+	/* if (isCollision(player.getBounds(), enemy.getBounds())) { */
+	if (isCollision(player.getBounds(), enemy.hitArea)) {
+	/* if (isCollide(player.hitArea, enemy.hitArea)) { */
+	/* if (isCollide(player.getBounds(), enemy.getBounds())) { */
+		/* if (isCollide(player.getBounds(), enemy.hitArea)) {  */
+		console.log('collision');
+		
+		/* window.removeEventListener('keydown', keyDownHandler); */
+		/* app.gameArea.ticker.stop(); */
+		/* obj1.scale.set(0.15, 0.15); */
 		/* for (let i = 0; i < obj1.width; i++) {
 
 			for(let j = 0; j < obj1.height; i++)	{
@@ -142,18 +164,20 @@ function detectCollision(obj1: Character, obj2: Character) {
 				particle.position.set(obj1.) 
 			}
 		} */
-		/* obj1.texture = PIXI.Texture.fromImage('resources/images/circle.png');
-		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png');
-		debugger;
-		console.log(obj1); */
+		/* obj1 = PIXI.Texture.fromImage('resources/images/circle.png');
+		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png'); */
+	/* 	debugger;
+		console.log(obj1);  */
 
-		drawParticles();
+		/* drawParticles(); */
 
 	}
 }
 
 function checkTargetHit(missle: Character, enemy: Character) {
-	if (isCollide(missle, enemy)) {
+	if (isCollide(missle.getBounds(), enemy.getBounds())){
+	/* if (isCollision(missle.hitArea, enemy.hitArea)){ */
+		debugger;
 		enemies = enemies.filter(e => e !== enemy);
 		app.gameArea.stage.removeChild(enemy);
 
@@ -164,22 +188,70 @@ function checkTargetHit(missle: Character, enemy: Character) {
 	}
 }
 
+
+function isCollision(r1, r2) {
+
+	//Define the variables we'll need to calculate
+	let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+  
+	//hit will determine whether there's a collision
+	hit = false;
+  
+	//Find the center points of each sprite
+	r1.centerX = r1.x + r1.width / 2;
+	r1.centerY = r1.y + r1.height / 2;
+	r2.centerX = r2.x + r2.width / 2;
+	r2.centerY = r2.y + r2.height / 2;
+  
+	//Find the half-widths and half-heights of each sprite
+	r1.halfWidth = r1.width / 2;
+	r1.halfHeight = r1.height / 2;
+	r2.halfWidth = r2.width / 2;
+	r2.halfHeight = r2.height / 2;
+  
+	//Calculate the distance vector between the sprites
+	vx = r1.centerX - r2.centerX;
+	vy = r1.centerY - r2.centerY;
+  
+	//Figure out the combined half-widths and half-heights
+	combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+	combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+  
+	//Check for a collision on the x axis
+	if (Math.abs(vx) < combinedHalfWidths) {
+  
+	  //A collision might be occurring. Check for a collision on the y axis
+	  if (Math.abs(vy) < combinedHalfHeights) {
+  
+		//There's definitely a collision happening
+		hit = true;
+	  } else {
+  
+		//There's no collision on the y axis
+		hit = false;
+	  }
+	} else {
+  
+	  //There's no collision on the x axis
+	  hit = false;
+	}
+  
+	//`hit` will be either `true` or `false`
+	return hit;
+  };
+
+
 function isCollide(a, b) {
 	if (a !== null && a !== undefined && b !== null && b !== undefined) {
-		return !(
-			((a.y + a.height) < (b.y)) ||
-			(a.y > (b.y + b.height)) ||
-			((a.x + a.width) < b.x) ||
-			(a.x > (b.x + b.width))
-		);
+		return a.x + a.width >= b.x && a.x <= b.x + b.width && a.y + a.height >= b.y && a.y <= b.y + b.height;
 	}
 }
 
 function shoot() {
 	let missle = new Character(PIXI.loader.resources['images'].textures['missle.png']);
-	missle.position.set(50, app.gameArea.stage.height / 2);
-	app.gameArea.stage.addChild(missle);
+	/* missle.hitArea = new PIXI.Rectangle(0,0, 23, 36); */
 	missle.position.set(player.x, player.y);
+	app.gameArea.stage.addChild(missle);
 	missles.push(missle);
 }
 
