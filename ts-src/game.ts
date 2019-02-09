@@ -79,7 +79,7 @@ function test() {
 		setInterval(() => {
 			addEnemies();
 		}, 2000);
-		
+
 		app.gameArea.ticker.add(() => {
 			player.x += player.velocityX;
 			player.y += player.velocityY;
@@ -148,7 +148,7 @@ function detectCollision(obj1: Character, obj2: Character) {
 		console.log(obj1); */
 
 		drawParticles();
-		
+
 	}
 }
 
@@ -217,7 +217,7 @@ function keyUpHandler(e: any): void {
 	}
 }
 
-function drawParticles(){
+function drawParticles() {
 
 	let particleContainer = new PIXI.particles.ParticleContainer(40, {
 		scale: true,
@@ -227,24 +227,79 @@ function drawParticles(){
 		alpha: true
 	});
 
-	particleContainer.pivot.set(0.5,0.5);
+	particleContainer.pivot.set(0.5, 0.5);
 	particleContainer.position.set(app.gameArea.view.width / 2, app.gameArea.view.height / 2);
 
 	app.gameArea.stage.addChild(particleContainer);
 
-	let circle = new PIXI.Graphics().beginFill(0x928374).drawCircle(0,0,20).endFill();
+	let circle = new PIXI.Graphics().beginFill(0x928374).drawCircle(0, 0, 2).endFill();
 	let texture: PIXI.Texture = circle.generateCanvasTexture();
+	let prevPos = 0;
 
-	for(let i = 0; i < 8; i++){
-		for(let j = 300; j >= 0; j--){
-			if(j % 10 === 0){
+	for (let i = 0; i < 8; i++) {
+		let particle: Sprite;
+		switch (i) {
+			case 0:
+				particle = new Sprite(texture);
+				particle.position.set(0, i);
+				particleContainer.addChild(particle);
+				break;
+			case 1:
+				prevPos = -i;
+				for (let j = -i; j <= i; j++) {
+					let particle = new Sprite(texture);
+					particle.position.set(j, i + 5);
+					particleContainer.addChild(particle);
+					prevPos = j;
+				}
+				break;
+			case 2:
+				for (let j = -i; j <= i; j++) {
+					let particle = new Sprite(texture);
+					particle.position.set(j, i + 5);
+					particleContainer.addChild(particle);
+				}
+				break;
+			case 3:
+				for (let j = -i; j <= i; j++) {
+					let particle = new Sprite(texture);
+					particle.position.set(j, i + 5);
+					particleContainer.addChild(particle);
+				}
+				break;
+			case 4:
+				for (let j = -i + 2; j <= i - 2; j++) {
+					let particle = new Sprite(texture);
+					particle.position.set(j, i + 5);
+					particleContainer.addChild(particle);
+				}
+				break;
+			case 5:
+				for (let j = -i + 4; j <= i - 4; j++) {
+					let particle = new Sprite(texture);
+					particle.position.set(j, i + 5);
+					particleContainer.addChild(particle);
+				}
+				break;
+			case 6:
+				particle = new Sprite(texture);
+				particle.position.set(0, i + 5);
+				particleContainer.addChild(particle);
+				break;
+		}
+
+		for (let j = 300; j >= 0; j--) {
+			if (j % 10 === 0) {
 				let particle = new Sprite(texture);
-				particle.position.set(j, i + 5);
+				particle.position.set(j, i * 5);
 				particleContainer.addChild(particle);
 			}
 		}
 	}
-
-	
-
 }
+
+/* function addParticles(){
+	let particle = new Sprite(texture);
+				particle.position.set(j, i * 5);
+				particleContainer.addChild(particle);
+} */
