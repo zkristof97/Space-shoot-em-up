@@ -67,9 +67,13 @@ function test() {
 		});
 
 		player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
+		console.log(player.width);
+		
+		/* player = new Character(new PIXI.Graphics().beginFill(0xFFF341).drawRect(200,200, player.width, player.height).endFill().generateCanvasTexture()); */
+		/* player = new Character(new PIXI.Graphics().beginFill(0xFFFFF).drawRect(350, 350, player.width, player.height).endFill().generateCanvasTexture()); */
 		player.position.set(75, app.gameArea.view.height / 2);
 		/* player.anchor.set(0.5); */
-		
+		/* player.scale.set(0.15); */
 		/* player.texture =  new PIXI.Graphics().beginFill(0xFFFFF).drawRect(player.x, player.y, 60, 20).endFill().generateCanvasTexture();
 
 		player.hitArea = new PIXI.Rectangle(player.x, player.y, 60, 20); */
@@ -77,23 +81,36 @@ function test() {
 		player.velocityX = 0;
 		player.velocityY = 0;
 
+		/* player.calculateBounds() */
+		
 		app.gameArea.stage.addChild(player);
 
 		addEnemies();
 		enemies[0].position.set(200,200);
 		enemies[0].hitArea = new PIXI.Rectangle(0, 0, 70, 40); 
-		
-		
 
-		/* let rect = new PIXI.Graphics().beginFill(0xFFFFF).drawRect(200, 200, 60, 10).endFill();
-		rect.hitArea = new PIXI.Rectangle(200, 200, 60, 10); 
+		/* let foo = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
+		foo.position.set(400,300);
+		app.gameArea.stage.addChild(foo); */
+		
+		/* let rect: PIXI.Texture = new PIXI.Graphics().beginFill(0xFFFFF).drawRect(350, 350, enemies[0].width, enemies[0].height).endFill().generateCanvasTexture();
+		let newSprite = new Sprite(rect); */
+		/* let rect: PIXI.Graphics = new PIXI.Graphics().drawRect(350, 350, enemies[0].width, enemies[0].height); */
+		/* rect.hitArea = new PIXI.Rectangle(200, 200, 60, 10); 
+		rect.lineColor = 0xF83FFF; */
 
-		app.gameArea.stage.addChild(rect); */
+		/* newSprite.position.set(350,350)
+		app.gameArea.stage.addChild(newSprite);  */
+		/* console.log(rect);
+		console.log(player); */
+						
+		
 
 		/* setInterval(() => {
 			addEnemies();
 		}, 2000); */
 
+		
 		app.gameArea.ticker.add(() => {
 			player.x += player.velocityX;
 			player.y += player.velocityY;
@@ -144,9 +161,9 @@ function addEnemies() {
 }
 
 
-function detectCollision(player: any, enemy: any) {
+function detectCollision(player: any, enemy: any): void {
 	/* if (isCollision(player.getBounds(), enemy.getBounds())) { */
-	if (isCollision(player.getBounds(), enemy.hitArea)) {
+	if (isCollision(player.getBounds(), enemy.getBounds())) {
 	/* if (isCollide(player.hitArea, enemy.hitArea)) { */
 	/* if (isCollide(player.getBounds(), enemy.getBounds())) { */
 		/* if (isCollide(player.getBounds(), enemy.hitArea)) {  */
@@ -199,13 +216,13 @@ function isCollision(r1, r2) {
   
 	//Find the center points of each sprite
 	r1.centerX = r1.x + r1.width / 2;
-	r1.centerY = r1.y + r1.height / 2;
+	r1.centerY = r1.y + r1.height / 4;
 	r2.centerX = r2.x + r2.width / 2;
 	r2.centerY = r2.y + r2.height / 2;
   
 	//Find the half-widths and half-heights of each sprite
 	r1.halfWidth = r1.width / 2;
-	r1.halfHeight = r1.height / 2;
+	r1.halfHeight = r1.height / 4;
 	r2.halfWidth = r2.width / 2;
 	r2.halfHeight = r2.height / 2;
   
@@ -243,14 +260,13 @@ function isCollision(r1, r2) {
 
 function isCollide(a, b) {
 	if (a !== null && a !== undefined && b !== null && b !== undefined) {
-		return a.x + a.width >= b.x && a.x <= b.x + b.width && a.y + a.height >= b.y && a.y <= b.y + b.height;
+		return a.x + a.width/2 >= b.x && a.x <= b.x + b.width && a.y + a.height >= b.y && a.y <= b.y + b.height;
 	}
 }
 
 function shoot() {
 	let missle = new Character(PIXI.loader.resources['images'].textures['missle.png']);
-	/* missle.hitArea = new PIXI.Rectangle(0,0, 23, 36); */
-	missle.position.set(player.x, player.y);
+	missle.position.set(player.x + player.x/2, player.y + player.height/2);
 	app.gameArea.stage.addChild(missle);
 	missles.push(missle);
 }
