@@ -10,7 +10,39 @@ let app: Application = new Application('resources/images/player-enemy-atlas.json
 
 document.getElementById('display').appendChild(app.gameArea.view);
 
-/* PIXI.loader.add('resources/images/circle.png').load(setup2); */
+PIXI.loader.add('splash-screen','resources/images/splash-screen.png').load(splashReady);
+
+function splashReady(){
+	let sdf = new Sprite(PIXI.loader.resources['splash-screen'].texture);
+	console.log(sdf.width, sdf.height);
+	sdf.alpha = 0.2;
+	app.gameArea.stage.addChild(sdf);
+	app.gameArea.ticker.add(()=>{
+		if(sdf.alpha + 0.1 <= 1){
+			sdf.alpha += 0.1;
+		}
+	});
+	setTimeout( ()=>{
+		app.gameArea.stage.removeChild(sdf);
+		showMainMenu();
+	},2000);
+}
+
+function showMainMenu(){
+	PIXI.loader.add('button', 'resources/images/button.png').load(ready);
+
+	function ready(){
+		for(let i = 0; i < 4; i++){
+			let button = new Sprite(PIXI.loader.resources['button'].texture);
+			button.anchor.set(0.5);
+			button.scale.set(0.5);
+			button.position.set(app.gameArea.view.width/2, app.gameArea.view.height/2 + (i*60))
+			app.gameArea.stage.addChild(button);
+		}
+	}
+}
+
+/* PIXI.loader.add('resources/images/circle.png').load(setup2);  */
 
 function setup2() {
 	for (var i = 0; i < 430; i++) {
@@ -27,9 +59,9 @@ function setup2() {
 		stars.push(star2);
 	}
 	
-}
+} 
 
-PIXI.loader.add('logo','resources/images/logo.png').load(loaded);
+/* PIXI.loader.add('logo','resources/images/logo.png').load(loaded);
 
 function moveLogo(){
 	if(logo.y - 18 >= app.gameArea.view.height/2){
@@ -63,10 +95,10 @@ function animateMoon(){
 		animation.play();
 		app.gameArea.stage.addChild(animation);		
 	}
-}
+} */
 
 
-let logo: PIXI.Sprite
+/* let logo: PIXI.Sprite
 
 function loaded(){
 	logo = new Sprite(PIXI.loader.resources['logo'].texture);
@@ -76,7 +108,7 @@ function loaded(){
 
 	app.gameArea.stage.addChild(logo);
 	app.gameArea.ticker.add(moveLogo);	
-}
+} */
 
 let startButtons: HTMLCollectionOf<Element> = document.getElementsByClassName('start-button');
 
@@ -383,3 +415,8 @@ function drawParticles() {
 				particle.position.set(j, i * 5);
 				particleContainer.addChild(particle);
 } */
+
+
+
+
+
