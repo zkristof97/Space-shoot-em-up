@@ -56,7 +56,7 @@ function test() {
 	}
 
 	function setup() {
-		/* PIXI.loader.add('resources/images/circle.png').load(setup2); */
+		PIXI.loader.add('resources/images/circle.png').load(setup2);
 
 		window.addEventListener('keydown', keyDownHandler);
 		window.addEventListener('keyup', keyUpHandler);
@@ -67,66 +67,30 @@ function test() {
 		});
 
 		player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
-		console.log(player.width);
-		
-		/* player = new Character(new PIXI.Graphics().beginFill(0xFFF341).drawRect(200,200, player.width, player.height).endFill().generateCanvasTexture()); */
-		/* player = new Character(new PIXI.Graphics().beginFill(0xFFFFF).drawRect(350, 350, player.width, player.height).endFill().generateCanvasTexture()); */
 		player.position.set(75, app.gameArea.view.height / 2);
-		/* player.anchor.set(0.5); */
-		/* player.scale.set(0.15); */
-		/* player.texture =  new PIXI.Graphics().beginFill(0xFFFFF).drawRect(player.x, player.y, 60, 20).endFill().generateCanvasTexture();
-
-		player.hitArea = new PIXI.Rectangle(player.x, player.y, 60, 20); */
-		
 		player.velocityX = 0;
 		player.velocityY = 0;
-
-		/* player.calculateBounds() */
-		
 		app.gameArea.stage.addChild(player);
 
-		addEnemies();
-		enemies[0].position.set(200,200);
-		enemies[0].hitArea = new PIXI.Rectangle(0, 0, 70, 40); 
-
-		/* let foo = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
-		foo.position.set(400,300);
-		app.gameArea.stage.addChild(foo); */
-		
-		/* let rect: PIXI.Texture = new PIXI.Graphics().beginFill(0xFFFFF).drawRect(350, 350, enemies[0].width, enemies[0].height).endFill().generateCanvasTexture();
-		let newSprite = new Sprite(rect); */
-		/* let rect: PIXI.Graphics = new PIXI.Graphics().drawRect(350, 350, enemies[0].width, enemies[0].height); */
-		/* rect.hitArea = new PIXI.Rectangle(200, 200, 60, 10); 
-		rect.lineColor = 0xF83FFF; */
-
-		/* newSprite.position.set(350,350)
-		app.gameArea.stage.addChild(newSprite);  */
-		/* console.log(rect);
-		console.log(player); */
-						
-		
-
-		/* setInterval(() => {
-			addEnemies();
-		}, 2000); */
+		setInterval(() => {
+			addEnemy();
+		}, 2000);
 
 		
 		app.gameArea.ticker.add(() => {
 			player.x += player.velocityX;
 			player.y += player.velocityY;
 
-			detectCollision(player, enemies[0]);
-			/* for (let i = enemies.length - 1; i >= 0; i--) {
+			for (let i = enemies.length - 1; i >= 0; i--) {
 				enemies[i].x -= 4;
 				enemies[i].y += app.randomNumber(-2, 2); 
 
 				detectCollision(player, enemies[i]);
-			} */
+			}
 
 			for (let i = missles.length - 1; i >= 0; i--) {
 				let currentMissle: Character = missles[i];
 				currentMissle.x += 10;
-				/* currentMissle.hitArea = new PIXI.Rectangle(currentMissle.x, currentMissle.y, 20, 12); */
 			}
 
 			for (let j = 0; j < missles.length; j++) {
@@ -150,25 +114,18 @@ function test() {
 	}
 }
 
-function addEnemies() {
+function addEnemy() {
 	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
 	enemy.scale.set(0.15, 0.15);
-	/* enemy.anchor.set(0.5); */
 	enemy.position.set(app.gameArea.view.width, app.randomNumber(enemy.height, 600 - enemy.height));
-
-	app.gameArea.stage.addChild(enemy);
 	enemies.push(enemy);
+	app.gameArea.stage.addChild(enemy);
 }
 
 
 function detectCollision(player: any, enemy: any): void {
-	/* if (isCollision(player.getBounds(), enemy.getBounds())) { */
 	if (isCollision(player.getBounds(), enemy.getBounds())) {
-	/* if (isCollide(player.hitArea, enemy.hitArea)) { */
-	/* if (isCollide(player.getBounds(), enemy.getBounds())) { */
-		/* if (isCollide(player.getBounds(), enemy.hitArea)) {  */
 		console.log('collision');
-		
 		/* window.removeEventListener('keydown', keyDownHandler); */
 		/* app.gameArea.ticker.stop(); */
 		/* obj1.scale.set(0.15, 0.15); */
@@ -183,23 +140,20 @@ function detectCollision(player: any, enemy: any): void {
 		} */
 		/* obj1 = PIXI.Texture.fromImage('resources/images/circle.png');
 		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png'); */
-	/* 	debugger;
+		/* 	debugger;
 		console.log(obj1);  */
-
 		/* drawParticles(); */
-
 	}
 }
 
 function checkTargetHit(missle: Character, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())){
-	/* if (isCollision(missle.hitArea, enemy.hitArea)){ */
-		debugger;
 		enemies = enemies.filter(e => e !== enemy);
 		app.gameArea.stage.removeChild(enemy);
 
 		missles = missles.filter(m => m !== missle);
 		app.gameArea.stage.removeChild(missle);
+	
 		score++;
 		message.text = 'Score: ' + score;
 	}
@@ -207,55 +161,37 @@ function checkTargetHit(missle: Character, enemy: Character) {
 
 
 function isCollision(r1, r2) {
-
-	//Define the variables we'll need to calculate
 	let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
-  
-	//hit will determine whether there's a collision
+
 	hit = false;
-  
-	//Find the center points of each sprite
+
 	r1.centerX = r1.x + r1.width / 2;
 	r1.centerY = r1.y + r1.height / 4;
 	r2.centerX = r2.x + r2.width / 2;
 	r2.centerY = r2.y + r2.height / 2;
-  
-	//Find the half-widths and half-heights of each sprite
+
 	r1.halfWidth = r1.width / 2;
 	r1.halfHeight = r1.height / 4;
 	r2.halfWidth = r2.width / 2;
 	r2.halfHeight = r2.height / 2;
-  
-	//Calculate the distance vector between the sprites
+
 	vx = r1.centerX - r2.centerX;
 	vy = r1.centerY - r2.centerY;
-  
-	//Figure out the combined half-widths and half-heights
+
 	combinedHalfWidths = r1.halfWidth + r2.halfWidth;
 	combinedHalfHeights = r1.halfHeight + r2.halfHeight;
-  
-	//Check for a collision on the x axis
+
 	if (Math.abs(vx) < combinedHalfWidths) {
-  
-	  //A collision might be occurring. Check for a collision on the y axis
-	  if (Math.abs(vy) < combinedHalfHeights) {
-  
-		//There's definitely a collision happening
+		if (Math.abs(vy) < combinedHalfHeights) {
 		hit = true;
-	  } else {
-  
-		//There's no collision on the y axis
-		hit = false;
-	  }
+		} else {
+			hit = false;
+		}
 	} else {
-  
-	  //There's no collision on the x axis
-	  hit = false;
+		hit = false;
 	}
-  
-	//`hit` will be either `true` or `false`
 	return hit;
-  };
+};
 
 
 function isCollide(a, b) {
