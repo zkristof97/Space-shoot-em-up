@@ -137,7 +137,7 @@ function animateMoon(){
 
 		let animation = new PIXI.extras.AnimatedSprite(frames);
 		animation.scale.set(0.9);
-		animation.animationSpeed = 0.2;
+		animation.animationSpeed = 0.15499;
 		animation.play();
 		app.gameArea.stage.addChild(animation);		
 		loadLogo();
@@ -234,31 +234,28 @@ function addEnemy() {
 }
 
 
-function detectCollision(player: any, enemy: any): void {
+function detectCollision(player: Character, enemy: any): void {
 	if (isCollision(player.getBounds(), enemy.getBounds())) {
-		console.log('collision');
-		/* window.removeEventListener('keydown', keyDownHandler); */
-		/* app.gameArea.ticker.stop(); */
-		/* obj1.scale.set(0.15, 0.15); */
-		/* for (let i = 0; i < obj1.width; i++) {
+		app.gameArea.stage.removeChild(player);
+		app.gameArea.stage.removeChild(enemy);
+		app.gameArea.ticker.stop();
 
-			for(let j = 0; j < obj1.height; i++)	{
-				let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
-				particle.scale.set(0.002);
-				particle.tint = 0xFFFF00;
-				particle.position.set(obj1.) 
-			}
+		/* PIXI.loader.add('resources/images/game-over.png').load(ready);
+		function ready(){
+			let gameOver = new Sprite(PIXI.loader.resources['images'].textures['alien.png']);
+			/* let gameOver = new Sprite(PIXI.loader.resources['resources/images/game-over.png'].texture); 
+			/* gameOver.anchor.set(0,1); 
+			/* gameOver.y = app.gameArea.view.height/2; 
+			gameOver.position.set(300,300);
+			app.gameArea.stage.addChild(gameOver);
+			debugger;
 		} */
-		/* obj1 = PIXI.Texture.fromImage('resources/images/circle.png');
-		obj2.texture = PIXI.Texture.fromImage('resources/images/circle.png'); */
-		/* 	debugger;
-		console.log(obj1);  */
-		/* drawParticles(); */
 	}
 }
 
 function checkTargetHit(missle: Character, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())){
+		drawParticles(enemy);
 		enemies = enemies.filter(e => e !== enemy);
 		app.gameArea.stage.removeChild(enemy);
 
@@ -267,6 +264,61 @@ function checkTargetHit(missle: Character, enemy: Character) {
 	
 		score++;
 		message.text = 'Score: ' + score;
+
+		
+	}
+}
+
+let particles: Sprite[] = new Array();
+
+function drawParticles(object: Character){
+	let container = new PIXI.Container();
+
+	for(let i = 0; i < object.height; i+=5){
+		for(let j = 0; j < object.width; j+=5)
+		{
+			let particle = new Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
+			particle.position.set(j,i);
+			particle.tint = 0xff0000;
+			particle.scale.set(0.01);
+			particles.push(particle);
+			container.addChild(particle);
+		}
+	}
+
+	app.gameArea.stage.addChild(container);
+	container.position.set(object.x,object.y);
+
+	setTimeout(()=>{
+		for(let i = 1; i >= 0; i-=0.1){
+			for(let j = 0; j < particles.length; j++){
+				particles[j].alpha = i;
+			}
+		}
+		for(let i = 0; i < particles.length; i++){
+			
+			particles = particles.filter(e => e !== particles[i]);
+		}
+		app.gameArea.stage.removeChild(container);
+	}, 1200);
+
+	
+
+	/* setTimeout( ()=>{
+		app.gameArea.ticker.add(animateParticles);
+	}, 1000); */
+}
+
+function animateParticles(){	
+	for(let i = 0; i < particles.length; i++){
+		let currentParticle: Sprite = particles[i];
+		if(currentParticle.y > player.height/2){
+			currentParticle.y += 3;
+			
+		}else{
+			currentParticle.y -= 3;
+		}
+		currentParticle.alpha -= 0.1;
 	}
 }
 
@@ -352,7 +404,7 @@ function keyUpHandler(e: any): void {
 	}
 }
 
-function drawParticles() {
+/* function drawParticles() {
 
 	let particleContainer = new PIXI.particles.ParticleContainer(40, {
 		scale: true,
@@ -431,15 +483,4 @@ function drawParticles() {
 			}
 		}
 	}
-}
-
-/* function addParticles(){
-	let particle = new Sprite(texture);
-				particle.position.set(j, i * 5);
-				particleContainer.addChild(particle);
 } */
-
-
-
-
-
