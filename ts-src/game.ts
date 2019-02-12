@@ -24,7 +24,6 @@ PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
 	.load(splashReady);
 
 function splashReady() {
-	initMenu();
 	let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
 
 	splashScreen.alpha = 0.2;
@@ -183,8 +182,6 @@ function run() {
 }
 
 function movement(){
-	
-
 	player.x += player.velocityX;
 	player.y += player.velocityY;
 
@@ -229,8 +226,11 @@ function addEnemy() {
 
 function detectCollision(player: Character, enemy: any): void {
 	if (isCollision(player.getBounds(), enemy.getBounds())) {
+		console.log('collision');
+		console.log(doExplosion);
+		
 		if(doExplosion === true){
-			explode(player, enemy); 
+			explode(player, enemy, false); 
 		}
 	}
 }
@@ -267,8 +267,10 @@ function addBackToMenuBtn(gameOverSign: Sprite){
 	app.gameArea.stage.addChild(button,text);
 }
 
-function explode(player, enemy) {
-	doExplosion = false;
+function explode(object, enemy, isMissle: boolean) {
+	if(isMissle === false){
+		doExplosion = false;
+	}
 	let frames: PIXI.Texture[] = new Array();
 	
 	for (let i = 1; i <= 11; i++) {
@@ -276,28 +278,35 @@ function explode(player, enemy) {
 		frames.push(PIXI.Texture.fromFrame('boom' + index + '.png'));
 	}
 
+	app.gameArea.stage.removeChild(object);
+	app.gameArea.stage.removeChild(enemy);
 	let anim = new PIXI.extras.AnimatedSprite(frames)
 	anim.loop = false;
 	anim.anchor.set(0.5);
 	anim.animationSpeed = 11/60;
-	anim.position.set(player.x + 100, player.y);
+	anim.position.set(object.x + 100, object.y);
 	anim.play();
 	app.gameArea.stage.addChild(anim);
 	
-	anim.onComplete = () => {
-		app.gameArea.stage.removeChild(anim);
-		app.gameArea.stage.removeChild(player);
-		app.gameArea.stage.removeChild(enemy);
-
-		app.gameArea.ticker.remove(movement);
-
-		displayGameOver();
-	};  
+	if(isMissle === true){
+		anim.onComplete = () => {
+			app.gameArea.stage.removeChild(anim);
+			drawParticles(enemy);
+		}
+	}
+	else{
+		anim.onComplete = () => {
+			app.gameArea.stage.removeChild(anim);
+			app.gameArea.ticker.remove(movement);
+			displayGameOver();
+		};
+	}
 }
 
 function checkTargetHit(missle: Character, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())) {
-		drawParticles(enemy);
+		explode(missle,enemy, true);
+		
 		enemies = enemies.filter(e => e !== enemy);
 		app.gameArea.stage.removeChild(enemy);
 
@@ -324,6 +333,24 @@ function drawParticles(object: Character) {
 			container.addChild(particle);
 		}
 	}
+
+	/* let limit = 5;
+	for(let i = 0; i < 9; i++){
+		if(i < 2 || i > 5){
+			limit = 2;
+		}
+		else{
+			limit = 5;
+		}
+		for(let j = 0; j < limit; j--){
+			let particle = new Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
+			particle.position.set(i + 5, j - 5);
+			particle.tint = 0xff0000;
+			particle.scale.set(0.01);
+			particles.push(particle);
+			container.addChild(particle);
+		}
+	} */
 
 	app.gameArea.stage.addChild(container);
 	container.position.set(object.x, object.y);
