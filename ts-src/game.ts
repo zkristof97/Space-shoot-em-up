@@ -8,6 +8,7 @@ let enemies: Character[] = new Array();
 let player: Character;
 let app: Application = new Application('resources/images/player-enemy-atlas.json');
 let doExplosion: boolean = true;
+let hasFaded: boolean = false;
 let message = new PIXI.Text('Score: 0');
 
 document.getElementById('display').appendChild(app.gameArea.view);
@@ -25,18 +26,18 @@ PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
 
 function splashReady() {
 	let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
-
-	splashScreen.alpha = 0.2;
 	app.gameArea.stage.addChild(splashScreen);
-	app.gameArea.ticker.add(() => {
-		if (splashScreen.alpha + 0.1 <= 1) {
-			splashScreen.alpha += 0.1;
-		}
-	});
 
-	setTimeout(() => {
-		app.gameArea.stage.removeChild(splashScreen);
-		initMenu();
+	setTimeout( ()=>{
+		app.gameArea.ticker.add(function fadeOut() {
+			if (splashScreen.alpha > 0) {
+
+				splashScreen.alpha -= 0.03;
+			}else{
+				app.gameArea.ticker.remove(fadeOut);
+				initMenu()
+			}
+		});
 	}, 2000);
 }
 
@@ -45,7 +46,6 @@ function loadLogo() {
 	logo.position.set(app.gameArea.view.width - 160, app.gameArea.view.height / 2 - 150);
 	logo.scale.set(0.2);
 	app.gameArea.stage.addChild(logo);
-
 }
 
 let buttons: Sprite[] = new Array();
@@ -164,7 +164,7 @@ function run() {
 
 	window.addEventListener('keydown', keyDownHandler);
 	window.addEventListener('keyup', keyUpHandler);
-	
+
 
 	intervalId = setInterval(addEnemy, 2000);
 
@@ -254,7 +254,7 @@ function addBackToMenuBtn(gameOverSign: Sprite) {
 		doExplosion = true;
 		app.gameArea.stage.removeChildren();
 		score = 0;
-		
+
 		message.text = 'Score: ' + score;
 		initMenu();
 	});
