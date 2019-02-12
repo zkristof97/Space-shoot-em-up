@@ -16,12 +16,16 @@ document.getElementById('display').appendChild(app.gameArea.view);
 PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
 	.add('explosion', 'resources/images/explosion.json')
 	.add('moon', 'resources/images/moon-animation.json')
-	.add('logo', 'resources/images/logo.png')
+	.add('logo', 'resources/images/logo-text.png')
 	.add('button', 'resources/images/button.png')
 	.add('starBg', 'resources/images/stars.png')
 	.add('images', 'resources/images/sprites.json')
 	.add('game-over', 'resources/images/game-over.png')
 	.add('resources/images/circle.png')
+	.add('pauseBtn', 'resources/images/pauseBtn.png')
+	.add('panel', 'resources/images/panel.png')
+	.add('stopBtn', 'resources/images/stopBtn.png')
+	.add('playBtn', 'resources/images/playBtn.png')
 	.load(splashReady);
 
 function splashReady() {
@@ -43,8 +47,8 @@ function splashReady() {
 
 function loadLogo() {
 	let logo = new Sprite(PIXI.loader.resources['logo'].texture);
-	logo.position.set(app.gameArea.view.width - 160, app.gameArea.view.height / 2 - 150);
-	logo.scale.set(0.2);
+	logo.position.set(app.gameArea.view.width - 180, app.gameArea.view.height / 2 - 105 );
+	logo.scale.set(0.4);
 	app.gameArea.stage.addChild(logo);
 }
 
@@ -154,8 +158,85 @@ class Star extends PIXI.Sprite {
 }
 
 let intervalId;
+let panel:Sprite;
+
+function showPanel(shouldShow: boolean){
+	if(shouldShow === true){
+		panel = new Sprite(PIXI.loader.resources['panel'].texture);
+		panel.anchor.set(0.5);
+		panel.position.set(app.gameArea.view.width/2,app.gameArea.view.height/2);
+		app.gameArea.stage.addChild(panel);
+		addPanelBtns();
+	}
+	else{
+		shouldPause = true;
+		app.gameArea.stage.removeChild(panel);
+
+		for(let i = 0; i < panelButtons.length; i++){
+			let currentButton = panelButtons[i];
+			panelButtons = panelButtons.filter(p => p !== currentButton);
+			app.gameArea.stage.removeChild(currentButton);
+		}
+
+		if(panelButtons.length === 1){
+			app.gameArea.stage.removeChild(panelButtons[0]);
+			panelButtons.pop();
+		}
+
+	}
+}
+
+let panelButtons: Sprite[] = new Array();
+
+function addPanelBtns(){
+	let stopBtn = new Sprite(PIXI.loader.resources['stopBtn'].texture);
+	stopBtn.scale.set(0.8);	
+	stopBtn.setParent(panel);
+	stopBtn.position.set(stopBtn.parent.x - stopBtn.parent.width /2 + 100, stopBtn.parent.y);
+	stopBtn.anchor.set(0.5);
+	stopBtn.interactive = true;
+	stopBtn.addListener('click', backToMenu);
+	app.gameArea.stage.addChild(stopBtn);
+	panelButtons.push(stopBtn);
+
+	let playBtn = new Sprite(PIXI.loader.resources['playBtn'].texture);
+	playBtn.scale.set(0.4);	
+	playBtn.setParent(panel);
+	playBtn.position.set(playBtn.parent.x, playBtn.parent.y);
+	playBtn.anchor.set(0.5);
+	playBtn.interactive = true;
+	playBtn.addListener('click', resumeGame);
+	app.gameArea.stage.addChild(playBtn);
+	panelButtons.push(playBtn);
+}
+
+let shouldPause: boolean = true;
+
+function resumeGame(){
+	app.gameArea.ticker.add(movement);
+	showPanel(false);
+}
 
 function run() {
+	let pauseBtn = new Sprite(PIXI.loader.resources['pauseBtn'].texture);
+	pauseBtn.anchor.set(1,1);
+	pauseBtn.scale.set(0.1);
+	pauseBtn.tint = 0xFFFFFF;
+	pauseBtn.position.set(app.gameArea.view.width - 15, app.gameArea.view.height - 15);
+	pauseBtn.interactive = true;
+	pauseBtn.addListener('click', ()=>{
+		if(shouldPause === true){
+			shouldPause = false;
+			app.gameArea.ticker.remove(movement);
+			showPanel(true);
+		}
+		else{
+			resumeGame();
+		}
+	});
+
+	app.gameArea.stage.addChild(pauseBtn);
+
 	message.style = new PIXI.TextStyle({
 		fill: 0xFFFFFF
 	});
@@ -208,7 +289,9 @@ function movement() {
 
 		for (let j = 0; j < missles.length; j++) {
 			for (let k = 0; k < enemies.length; k++) {
+				if (missles[j] !== null && missles[j] !== undefined && enemies[k] !== null && enemies[k] !== undefined) {
 				checkTargetHit(missles[j], enemies[k]);
+				}
 			}
 		}
 
@@ -249,14 +332,8 @@ function displayGameOver() {
 	addBackToMenuBtn(gameOver);
 }
 
-function addBackToMenuBtn(gameOverSign: Sprite) {
-	let button = new Sprite(PIXI.loader.resources['button'].texture);
-	button.anchor.set(0.5);
-	button.scale.set(0.5);
-	button.position.set(app.gameArea.view.width / 2, app.gameArea.view.height / 2 + gameOverSign.height / 2 + button.height);
-	button.interactive = true;
-	button.addListener('click', () => {
-		clearInterval(intervalId);
+function backToMenu(){
+	clearInterval(intervalId);
 		missles = new Array();
 		enemies = new Array();
 		doExplosion = true;
@@ -265,6 +342,16 @@ function addBackToMenuBtn(gameOverSign: Sprite) {
 
 		message.text = 'Score: ' + score;
 		initMenu();
+}
+
+function addBackToMenuBtn(gameOverSign: Sprite) {
+	let button = new Sprite(PIXI.loader.resources['button'].texture);
+	button.anchor.set(0.5);
+	button.scale.set(0.5);
+	button.position.set(app.gameArea.view.width / 2, app.gameArea.view.height / 2 + gameOverSign.height / 2 + button.height);
+	button.interactive = true;
+	button.addListener('click', () => {
+		backToMenu();
 	});
 	let text = new PIXI.Text('Back');
 	text.anchor.set(0.5);
@@ -312,18 +399,8 @@ function explode(object, enemy, isMissle: boolean) {
 
 function checkTargetHit(missle: Character, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())) {
-		console.log(missles.length);
-
-		if (missles.length === 1) {
-			missles.pop();
-			console.log(missles.length);
-
-		}
-		else {
-			missles = missles.filter(m => m !== missle);
-		}
+		missles = missles.filter(m => m !== missle);
 		app.gameArea.stage.removeChild(missle);
-		console.log(missles);
 
 		explode(missle, enemy, true);
 
@@ -417,9 +494,7 @@ function isCollision(r1, r2) {
 
 
 function isCollide(a, b) {
-	if (a !== null && a !== undefined && b !== null && b !== undefined) {
-		return a.x + a.width / 2 >= b.x && a.x <= b.x + b.width && a.y + a.height >= b.y && a.y <= b.y + b.height;
-	}
+	return a.x + a.width / 2 >= b.x && a.x <= b.x + b.width && a.y + a.height >= b.y && a.y <= b.y + b.height;
 }
 
 function shoot() {
@@ -451,22 +526,42 @@ function contain(sprite, container) {
 
 function keyDownHandler(e: any): void {
 	let speed = 5;
+	let offset = 4;
 	switch (e.keyCode) {
 		case 32:
 			shoot();
 			break;
 		case 37:
-			player.velocityX = -speed;
+			if(player.x <= speed * offset){
+				player.velocityX = 0;
+				player.x = speed * offset ;
+			}else{
+				player.velocityX = -speed;
+			}
 			break;
 		case 38:
-			player.velocityY = -speed;
+			if(player.y <= speed * offset){
+				player.velocityY = 0;
+				player.y = speed * offset;
+			}else{
+				player.velocityY = -speed;
+			}
 			break;
 		case 39:
-			player.velocityX = speed;
+			if(player.x + player.width >= app.gameArea.view.width - speed * offset){
+				player.velocityX = 0;
+				player.x = app.gameArea.view.width - speed * offset - player.width;
+			}else{
+				player.velocityX = speed;
+			}
 			break;
 		case 40:
-			player.velocityY = speed;
-			console.log(player.y);
+			if(player.y + player.height >= app.gameArea.view.height - speed * offset){
+				player.velocityY = 0;
+				player.y = app.gameArea.view.height - speed * offset - player.height;
+			}else{
+				player.velocityY = speed;
+			}
 			break;
 	}
 
