@@ -28,12 +28,12 @@ function splashReady() {
 	let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
 	app.gameArea.stage.addChild(splashScreen);
 
-	setTimeout( ()=>{
+	setTimeout(() => {
 		app.gameArea.ticker.add(function fadeOut() {
 			if (splashScreen.alpha > 0) {
 
 				splashScreen.alpha -= 0.03;
-			}else{
+			} else {
 				app.gameArea.ticker.remove(fadeOut);
 				initMenu()
 			}
@@ -177,42 +177,55 @@ function run() {
 	app.gameArea.ticker.add(movement);
 }
 
+let state: string;
+
 function movement() {
-	player.x += player.velocityX;
-	player.y += player.velocityY;
 
-	/* contain(player, app.gameArea.stage); */
+	if (state === 'play') {
+		player.x += player.velocityX;
+		player.y += player.velocityY;
 
-	for (let i = enemies.length - 1; i >= 0; i--) {
-		enemies[i].x -= 4;
-		enemies[i].y += app.randomNumber(-2, 2);
+		/* contain(player, app.gameArea.stage); */
 
-		detectCollision(player, enemies[i]);
-	}
+		for (let i = enemies.length - 1; i >= 0; i--) {
+			let currentEnemy = enemies[i];
+			currentEnemy.x -= 4;
+			/* currentEnemy.y += app.randomNumber(-2, 2); */ //SHOULD I LEAVE IT IN OR NOT? DECIDE LATER
 
-	for (let i = missles.length - 1; i >= 0; i--) {
-		let currentMissle: Character = missles[i];
-		currentMissle.x += 10;
-		if (currentMissle.x > app.gameArea.view.width) {
-			missles = missles.filter(m => m !== currentMissle);
+			detectCollision(player, currentEnemy);
+			if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
+				enemies = enemies.filter(e => e !== currentEnemy);
+				app.gameArea.stage.removeChild(currentEnemy);
+			}
+		}
+
+		for (let i = missles.length - 1; i >= 0; i--) {
+			let currentMissle: Character = missles[i];
+			currentMissle.x += 10;
+			if (currentMissle.x > app.gameArea.view.width) {
+				missles = missles.filter(m => m !== currentMissle);
+			}
+		}
+
+		for (let j = 0; j < missles.length; j++) {
+			for (let k = 0; k < enemies.length; k++) {
+				checkTargetHit(missles[j], enemies[k]);
+			}
+		}
+
+		for (let i = 0; i < stars.length; i++) {
+			let currentStar: Star = stars[i];
+			currentStar.x -= 1;
+
+			if (currentStar.x < 0) {
+				currentStar.x *= -currentStar.speed;
+				currentStar.x += app.gameArea.view.width;
+				currentStar.y = app.randomNumber(1, 600);
+			}
 		}
 	}
-
-	for (let j = 0; j < missles.length; j++) {
-		for (let k = 0; k < enemies.length; k++) {
-			checkTargetHit(missles[j], enemies[k]);
-		}
-	}
-
-	for (let i = 0; i < stars.length; i++) {
-		let currentStar: Star = stars[i];
-		currentStar.x -= 1;
-
-		if (currentStar.x < 0) {
-			currentStar.x *= -currentStar.speed;
-			currentStar.x += app.gameArea.view.width;
-			currentStar.y = app.randomNumber(1, 600);
-		}
+	else if (state === 'gameOver'){
+		
 	}
 }
 
