@@ -181,7 +181,6 @@ let state: string;
 
 function movement() {
 
-	if (state === 'play') {
 		player.x += player.velocityX;
 		player.y += player.velocityY;
 
@@ -223,10 +222,6 @@ function movement() {
 				currentStar.y = app.randomNumber(1, 600);
 			}
 		}
-	}
-	else if (state === 'gameOver'){
-		
-	}
 }
 
 function addEnemy() {
