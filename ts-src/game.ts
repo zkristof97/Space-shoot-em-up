@@ -6,13 +6,21 @@ let score: number = 0;
 let missles: Character[] = new Array();
 let enemies: Character[] = new Array();
 let player: Character;
-let app: Application = new Application('resources/images/player-enemy-atlas.json');
+let app: Application = new Application({
+	width: 800,
+	height: 600,
+	antialias: true,
+	transparent: false,
+	resolution: 1
+});
+
 let doExplosion: boolean = true;
 let message = new PIXI.Text('Score: 0');
 
-document.getElementById('display').appendChild(app.gameArea.view);
+document.getElementById('display').appendChild(app.view);
 
 PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+	.add('resources/images/player-enemy-atlas.json')
 	.add('explosion', 'resources/images/explosion.json')
 	.add('moon', 'resources/images/moon-animation.json')
 	.add('logo', 'resources/images/logo-text.png')
@@ -30,15 +38,15 @@ PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
 
 function splashReady() {
 	let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
-	app.gameArea.stage.addChild(splashScreen);
+	app.stage.addChild(splashScreen);
 
 	setTimeout(() => {
-		app.gameArea.ticker.add(function fadeOut() {
+		app.ticker.add(function fadeOut() {
 			if (splashScreen.alpha > 0) {
 
 				splashScreen.alpha -= 0.03;
 			} else {
-				app.gameArea.ticker.remove(fadeOut);
+				app.ticker.remove(fadeOut);
 				initMenu()
 			}
 		});
@@ -47,9 +55,9 @@ function splashReady() {
 
 function loadLogo() {
 	let logo = new Sprite(PIXI.loader.resources['logo'].texture);
-	logo.position.set(app.gameArea.view.width - 225, app.gameArea.view.height / 2 - 125 );
+	logo.position.set(app.view.width - 225, app.view.height / 2 - 125 );
 	logo.scale.set(0.5);
-	app.gameArea.stage.addChild(logo);
+	app.stage.addChild(logo);
 }
 
 let buttons: Sprite[] = new Array();
@@ -59,7 +67,7 @@ function loadButtons() {
 		let button: Sprite = new Sprite(PIXI.loader.resources['button'].texture);
 		button.anchor.set(0.5);
 		button.scale.set(0.5);
-		button.position.set(app.gameArea.view.width - button.width + 50, app.gameArea.view.height / 2 + (i * 60))
+		button.position.set(app.view.width - button.width + 50, app.view.height / 2 + (i * 60))
 		buttons.push(button);
 		button.interactive = true;
 		if (i === 3) {
@@ -79,7 +87,7 @@ function loadButtons() {
 			console.log('out');
 
 		});
-		app.gameArea.stage.addChild(button);
+		app.stage.addChild(button);
 	}
 	addText();
 }
@@ -97,7 +105,7 @@ function addText() {
 
 		text.anchor.set(0.5);
 		text.position.set(buttons[i].x, buttons[i].y);
-		app.gameArea.stage.addChild(text);
+		app.stage.addChild(text);
 	}
 }
 
@@ -111,11 +119,11 @@ function initMenu() {
 
 function loadBackground() {
 	let background = new Sprite(PIXI.loader.resources['starBg'].texture);
-	app.gameArea.stage.addChild(background);
+	app.stage.addChild(background);
 }
 
 function loadStars() {
-	app.gameArea.stage.removeChildren();
+	app.stage.removeChildren();
 	for (var i = 0; i < 430; i++) {
 		let star2;
 		if (i % 2 === 0) {
@@ -126,7 +134,7 @@ function loadStars() {
 		}
 		star2.position.set(app.randomNumber(1, 800), app.randomNumber(1, 600));
 		star2.scale.set(0.01);
-		app.gameArea.stage.addChild(star2);
+		app.stage.addChild(star2);
 		stars.push(star2);
 	}
 	run();
@@ -143,7 +151,7 @@ function animateMoon() {
 	animation.scale.set(0.9);
 	animation.animationSpeed = 10 / 60;
 	animation.play();
-	app.gameArea.stage.addChild(animation);
+	app.stage.addChild(animation);
 }
 
 let stars: Star[] = new Array();
@@ -164,22 +172,22 @@ function showPanel(shouldShow: boolean){
 	if(shouldShow === true){
 		panel = new Sprite(PIXI.loader.resources['panel'].texture);
 		panel.anchor.set(0.5);
-		panel.position.set(app.gameArea.view.width/2,app.gameArea.view.height/2);
-		app.gameArea.stage.addChild(panel);
+		panel.position.set(app.view.width/2,app.view.height/2);
+		app.stage.addChild(panel);
 		addPanelBtns();
 	}
 	else{
 		shouldPause = true;
-		app.gameArea.stage.removeChild(panel);
+		app.stage.removeChild(panel);
 
 		for(let i = 0; i < panelButtons.length; i++){
 			let currentButton = panelButtons[i];
 			panelButtons = panelButtons.filter(p => p !== currentButton);
-			app.gameArea.stage.removeChild(currentButton);
+			app.stage.removeChild(currentButton);
 		}
 
 		if(panelButtons.length === 1){
-			app.gameArea.stage.removeChild(panelButtons[0]);
+			app.stage.removeChild(panelButtons[0]);
 			panelButtons.pop();
 		}
 
@@ -196,8 +204,6 @@ function addPanelBtns(){
 	stopBtn.anchor.set(0.5);
 	stopBtn.interactive = true;
 	stopBtn.addListener('click', backToMenu);
-	app.gameArea.stage.addChild(stopBtn);
-	panelButtons.push(stopBtn);
 
 	let playBtn = new Sprite(PIXI.loader.resources['playBtn'].texture);
 	playBtn.scale.set(0.4);	
@@ -206,8 +212,6 @@ function addPanelBtns(){
 	playBtn.anchor.set(0.5);
 	playBtn.interactive = true;
 	playBtn.addListener('click', resumeGame);
-	app.gameArea.stage.addChild(playBtn);
-	panelButtons.push(playBtn);
 
 	let replayBtn = new Sprite(PIXI.loader.resources['replayBtn'].texture);
 	replayBtn.scale.set(0.32);	
@@ -219,14 +223,15 @@ function addPanelBtns(){
 		console.log('click');
 		
 	});
-	app.gameArea.stage.addChild(replayBtn);
-	panelButtons.push(replayBtn);
+	
+	panelButtons.push(replayBtn, playBtn, stopBtn);
+	app.stage.addChild(replayBtn, playBtn, stopBtn);
 }
 
 let shouldPause: boolean = true;
 
 function resumeGame(){
-	app.gameArea.ticker.add(movement);
+	app.ticker.add(movement);
 	showPanel(false);
 }
 
@@ -235,12 +240,12 @@ function run() {
 	pauseBtn.anchor.set(1,1);
 	pauseBtn.scale.set(0.1);
 	pauseBtn.tint = 0xFFFFFF;
-	pauseBtn.position.set(app.gameArea.view.width - 15, app.gameArea.view.height - 15);
+	pauseBtn.position.set(app.view.width - 15, app.view.height - 15);
 	pauseBtn.interactive = true;
 	pauseBtn.addListener('click', ()=>{
 		if(shouldPause === true){
 			shouldPause = false;
-			app.gameArea.ticker.remove(movement);
+			app.ticker.remove(movement);
 			showPanel(true);
 		}
 		else{
@@ -248,13 +253,13 @@ function run() {
 		}
 	});
 
-	app.gameArea.stage.addChild(pauseBtn);
+	app.stage.addChild(pauseBtn);
 
 	message.style = new PIXI.TextStyle({
 		fill: 0xFFFFFF
 	});
 	message.position.set(10, 10);
-	app.gameArea.stage.addChild(message);
+	app.stage.addChild(message);
 
 	window.addEventListener('keydown', keyDownHandler);
 	window.addEventListener('keyup', keyUpHandler);
@@ -263,12 +268,12 @@ function run() {
 	intervalId = setInterval(addEnemy, 2000);
 
 	player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
-	player.position.set(75, app.gameArea.view.height / 2);
+	player.position.set(75, app.view.height / 2);
 	player.velocityX = 0;
 	player.velocityY = 0;
-	app.gameArea.stage.addChild(player);
+	app.stage.addChild(player);
 
-	app.gameArea.ticker.add(movement);
+	app.ticker.add(movement);
 }
 
 function movement() {
@@ -284,14 +289,14 @@ function movement() {
 			detectCollision(player, currentEnemy);
 			if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
 				enemies = enemies.filter(e => e !== currentEnemy);
-				app.gameArea.stage.removeChild(currentEnemy);
+				app.stage.removeChild(currentEnemy);
 			}
 		}
 
 		for (let i = missles.length - 1; i >= 0; i--) {
 			let currentMissle: Character = missles[i];
 			currentMissle.x += 10;
-			if (currentMissle.x > app.gameArea.view.width) {
+			if (currentMissle.x > app.view.width) {
 				missles = missles.filter(m => m !== currentMissle);
 			}
 		}
@@ -310,7 +315,7 @@ function movement() {
 
 			if (currentStar.x < 0) {
 				currentStar.x *= -currentStar.speed;
-				currentStar.x += app.gameArea.view.width;
+				currentStar.x += app.view.width;
 				currentStar.y = app.randomNumber(1, 600);
 			}
 		}
@@ -319,9 +324,9 @@ function movement() {
 function addEnemy() {
 	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
 	enemy.scale.set(0.15, 0.15);
-	enemy.position.set(app.gameArea.view.width, app.randomNumber(enemy.height, 600 - enemy.height));
+	enemy.position.set(app.view.width, app.randomNumber(enemy.height, 600 - enemy.height));
 	enemies.push(enemy);
-	app.gameArea.stage.addChild(enemy);
+	app.stage.addChild(enemy);
 }
 
 function detectCollision(player: Character, enemy: any): void {
@@ -335,9 +340,9 @@ function detectCollision(player: Character, enemy: any): void {
 function displayGameOver() {
 	let gameOver = new Sprite(PIXI.loader.resources['game-over'].texture);
 	gameOver.anchor.set(0.5);
-	gameOver.x = app.gameArea.view.width / 2;
-	gameOver.y = app.gameArea.view.height / 2;
-	app.gameArea.stage.addChild(gameOver);
+	gameOver.x = app.view.width / 2;
+	gameOver.y = app.view.height / 2;
+	app.stage.addChild(gameOver);
 	addBackToMenuBtn(gameOver);
 }
 
@@ -346,7 +351,7 @@ function backToMenu(){
 		missles = new Array();
 		enemies = new Array();
 		doExplosion = true;
-		app.gameArea.stage.removeChildren();
+		app.stage.removeChildren();
 		score = 0;
 
 		message.text = 'Score: ' + score;
@@ -357,7 +362,7 @@ function addBackToMenuBtn(gameOverSign: Sprite) {
 	let button = new Sprite(PIXI.loader.resources['button'].texture);
 	button.anchor.set(0.5);
 	button.scale.set(0.5);
-	button.position.set(app.gameArea.view.width / 2, app.gameArea.view.height / 2 + gameOverSign.height / 2 + button.height);
+	button.position.set(app.view.width / 2, app.view.height / 2 + gameOverSign.height / 2 + button.height);
 	button.interactive = true;
 	button.addListener('click', () => {
 		backToMenu();
@@ -366,7 +371,7 @@ function addBackToMenuBtn(gameOverSign: Sprite) {
 	text.anchor.set(0.5);
 	text.position.set(button.x, button.y);
 
-	app.gameArea.stage.addChild(button, text);
+	app.stage.addChild(button, text);
 }
 
 function explode(object, enemy, isMissle: boolean) {
@@ -381,26 +386,26 @@ function explode(object, enemy, isMissle: boolean) {
 		frames.push(PIXI.Texture.fromFrame('boom' + index + '.png'));
 	}
 
-	app.gameArea.stage.removeChild(object);
-	app.gameArea.stage.removeChild(enemy);
+	app.stage.removeChild(object);
+	app.stage.removeChild(enemy);
 	let anim = new PIXI.extras.AnimatedSprite(frames)
 	anim.loop = false;
 	anim.anchor.set(0.5);
 	anim.animationSpeed = 11 / 60;
 	anim.position.set(object.x + 100, object.y);
 	anim.play();
-	app.gameArea.stage.addChild(anim);
+	app.stage.addChild(anim);
 
 	if (isMissle === true) {
 		anim.onComplete = () => {
-			app.gameArea.stage.removeChild(anim);
+			app.stage.removeChild(anim);
 			drawParticles(enemy);
 		}
 	}
 	else {
 		anim.onComplete = () => {
-			app.gameArea.stage.removeChild(anim);
-			app.gameArea.ticker.remove(movement);
+			app.stage.removeChild(anim);
+			app.ticker.remove(movement);
 			displayGameOver();
 		};
 	}
@@ -409,12 +414,12 @@ function explode(object, enemy, isMissle: boolean) {
 function checkTargetHit(missle: Character, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())) {
 		missles = missles.filter(m => m !== missle);
-		app.gameArea.stage.removeChild(missle);
+		app.stage.removeChild(missle);
 
 		explode(missle, enemy, true);
 
 		enemies = enemies.filter(e => e !== enemy);
-		app.gameArea.stage.removeChild(enemy);
+		app.stage.removeChild(enemy);
 
 		score++;
 		message.text = 'Score: ' + score;
@@ -437,7 +442,7 @@ function drawParticles(object: Character) {
 		}
 	}
 
-	app.gameArea.stage.addChild(container);
+	app.stage.addChild(container);
 	container.position.set(object.x, object.y);
 
 	setTimeout(() => {
@@ -450,11 +455,11 @@ function drawParticles(object: Character) {
 
 			particles = particles.filter(e => e !== particles[i]);
 		}
-		app.gameArea.stage.removeChild(container);
+		app.stage.removeChild(container);
 	}, 1200);
 }
 
-function animateParticles() {
+/* function animateParticles() {
 	for (let i = 0; i < particles.length; i++) {
 		let currentParticle: Sprite = particles[i];
 		if (currentParticle.y > player.height / 2) {
@@ -465,7 +470,7 @@ function animateParticles() {
 		}
 		currentParticle.alpha -= 0.1;
 	}
-}
+} */
 
 
 function isCollision(r1, r2) {
@@ -509,7 +514,7 @@ function isCollide(a, b) {
 function shoot() {
 	let missle = new Character(PIXI.loader.resources['images'].textures['missle.png']);
 	missle.position.set(player.x + player.x / 2, player.y + player.height / 2);
-	app.gameArea.stage.addChild(missle);
+	app.stage.addChild(missle);
 	missles.push(missle);
 }
 
@@ -557,24 +562,22 @@ function keyDownHandler(e: any): void {
 			}
 			break;
 		case 39:
-			if(player.x + player.width >= app.gameArea.view.width - speed * offset){
+			if(player.x + player.width >= app.view.width - speed * offset){
 				player.velocityX = 0;
-				player.x = app.gameArea.view.width - speed * offset - player.width;
+				player.x = app.view.width - speed * offset - player.width;
 			}else{
 				player.velocityX = speed;
 			}
 			break;
 		case 40:
-			if(player.y + player.height >= app.gameArea.view.height - speed * offset){
+			if(player.y + player.height >= app.view.height - speed * offset){
 				player.velocityY = 0;
-				player.y = app.gameArea.view.height - speed * offset - player.height;
+				player.y = app.view.height - speed * offset - player.height;
 			}else{
 				player.velocityY = speed;
 			}
 			break;
 	}
-
-	contain(player, app.gameArea.stage);
 }
 
 function keyUpHandler(e: any): void {
