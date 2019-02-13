@@ -8,7 +8,6 @@ let enemies: Character[] = new Array();
 let player: Character;
 let app: Application = new Application('resources/images/player-enemy-atlas.json');
 let doExplosion: boolean = true;
-let hasFaded: boolean = false;
 let message = new PIXI.Text('Score: 0');
 
 document.getElementById('display').appendChild(app.gameArea.view);
@@ -26,6 +25,7 @@ PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
 	.add('panel', 'resources/images/panel.png')
 	.add('stopBtn', 'resources/images/stopBtn.png')
 	.add('playBtn', 'resources/images/playBtn.png')
+	.add('replayBtn','resources/images/replayBtn.png')
 	.load(splashReady);
 
 function splashReady() {
@@ -47,8 +47,8 @@ function splashReady() {
 
 function loadLogo() {
 	let logo = new Sprite(PIXI.loader.resources['logo'].texture);
-	logo.position.set(app.gameArea.view.width - 180, app.gameArea.view.height / 2 - 105 );
-	logo.scale.set(0.4);
+	logo.position.set(app.gameArea.view.width - 225, app.gameArea.view.height / 2 - 125 );
+	logo.scale.set(0.5);
 	app.gameArea.stage.addChild(logo);
 }
 
@@ -141,7 +141,7 @@ function animateMoon() {
 	}
 	let animation = new PIXI.extras.AnimatedSprite(frames);
 	animation.scale.set(0.9);
-	animation.animationSpeed = 48 / 60;
+	animation.animationSpeed = 10 / 60;
 	animation.play();
 	app.gameArea.stage.addChild(animation);
 }
@@ -208,6 +208,19 @@ function addPanelBtns(){
 	playBtn.addListener('click', resumeGame);
 	app.gameArea.stage.addChild(playBtn);
 	panelButtons.push(playBtn);
+
+	let replayBtn = new Sprite(PIXI.loader.resources['replayBtn'].texture);
+	replayBtn.scale.set(0.32);	
+	replayBtn.setParent(panel);
+	replayBtn.position.set(replayBtn.parent.x + replayBtn.width * 1.5, replayBtn.parent.y);
+	replayBtn.anchor.set(0.5);
+	replayBtn.interactive = true;
+	replayBtn.addListener('click', () =>{
+		console.log('click');
+		
+	});
+	app.gameArea.stage.addChild(replayBtn);
+	panelButtons.push(replayBtn);
 }
 
 let shouldPause: boolean = true;
@@ -258,14 +271,10 @@ function run() {
 	app.gameArea.ticker.add(movement);
 }
 
-let state: string;
-
 function movement() {
 
 		player.x += player.velocityX;
 		player.y += player.velocityY;
-
-		/* contain(player, app.gameArea.stage); */
 
 		for (let i = enemies.length - 1; i >= 0; i--) {
 			let currentEnemy = enemies[i];
