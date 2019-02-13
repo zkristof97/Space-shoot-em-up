@@ -1,9 +1,7 @@
-import Character from './Character';
 import * as PIXI from 'pixi.js';
 
-export default class Application extends PIXI.Application{
-    constructor(options: PIXI.ApplicationOptions) {
-        super(options)
+export class Application{
+    constructor() {
     }
 
     public randomNumber(min, max): number{
