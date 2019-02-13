@@ -1,23 +1,23 @@
 import { Sprite } from "pixi.js";
 
-export class Menu{
+export class Menu {
 
-    buttons: Array<Sprite>;
+    public buttons: Array<Sprite>;
 
-    public init(app:PIXI.Application) {
+    public init(app: PIXI.Application): void {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
     }
 
-    private loadLogo(app:PIXI.Application) {
+    private loadLogo(app: PIXI.Application): void {
         let logo = new PIXI.Sprite(PIXI.loader.resources['logo'].texture);
-        logo.position.set(app.view.width - 225, app.view.height / 2 - 125 );
+        logo.position.set(app.view.width - 225, app.view.height / 2 - 125);
         logo.scale.set(0.5);
         app.stage.addChild(logo);
     }
 
-    private loadButtons(app:PIXI.Application) {
+    private loadButtons(app: PIXI.Application, startGame: void): void {
         this.buttons = new Array();
         for (let i = 0; i < 4; i++) {
             let button: Sprite = new Sprite(PIXI.loader.resources['button'].texture);
@@ -26,29 +26,15 @@ export class Menu{
             button.position.set(app.view.width - button.width + 50, app.view.height / 2 + (i * 60))
             this.buttons.push(button);
             button.interactive = true;
-            if (i === 3) {
-                button.addListener('click', () => {
-                    window.location.replace('https://www.google.com/');
-                });
-            }
-            else {
-                /* button.addListener('click', loadStars); */
-            }
-    
-            button.addListener('mouseover', () => {
-                console.log('over');
-    
-            });
-            button.addListener('mouseout', () => {
-                console.log('out');
-    
-            });
             app.stage.addChild(button);
         }
+        this.buttons[3].addListener('click', () =>{
+            window.location.replace('https://www.google.com/');
+        });
         this.btnText(app);
     }
 
-    private btnText(app: PIXI.Application) {
+    private btnText(app: PIXI.Application): void {
         let i = 0;
         for (i; i < 4; i++) {
             let text: PIXI.Text;
@@ -64,17 +50,17 @@ export class Menu{
         }
     }
 
-    private loadBackground(app: PIXI.Application) {
+    private loadBackground(app: PIXI.Application): void {
         let background = new Sprite(PIXI.loader.resources['starBg'].texture);
         app.stage.addChild(background);
         this.animateMoon(app);
     }
 
-    private animateMoon(app: PIXI.Application) {
+    private animateMoon(app: PIXI.Application): void {
         let frames: PIXI.Texture[] = new Array();
         for (let i = 1; i <= 48; i++) {
             let index = i < 10 ? '0' + i : i;
-    
+
             frames.push(PIXI.Texture.fromFrame(index + '.png'));
         }
         let animation = new PIXI.extras.AnimatedSprite(frames);
