@@ -4,6 +4,7 @@ import { Sprite, RoundedRectangle } from 'pixi.js';
 import { Menu } from './menu';
 import { Game } from './game';
 import Panel from './panel';
+import Play from './play';
 
 
 let player: Character;
@@ -19,69 +20,85 @@ let appOptions: PIXI.ApplicationOptions = {
 let app: PIXI.Application;
 let panel: Panel;
 let menu: Menu;
-let game: Game;
+let play: Play;
 
 
 initGame();
 
-function initGame(){
+function initGame() {
 	app = new PIXI.Application(appOptions);
 	panel = new Panel();
 	menu = new Menu();
-	game = new Game();
 
 	document.getElementById('display').appendChild(app.view);
 
 	PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
-	.add('explosion', 'resources/images/explosion.json')
-	.add('moon', 'resources/images/moon-animation.json')
-	.add('logo', 'resources/images/logo-text.png')
-	.add('button', 'resources/images/button.png')
-	.add('starBg', 'resources/images/stars.png')
-	.add('images', 'resources/images/sprites.json')
-	.add('game-over', 'resources/images/game-over.png')
-	.add('resources/images/circle.png')
-	.add('pauseBtn', 'resources/images/pauseBtn.png')
-	.add('panel', 'resources/images/panel.png')
-	.add('stopBtn', 'resources/images/stopBtn.png')
-	.add('playBtn', 'resources/images/playBtn.png')
-	.add('replayBtn','resources/images/replayBtn.png')
-	.load(displaySplashScreen);
+		.add('explosion', 'resources/images/explosion.json')
+		.add('moon', 'resources/images/moon-animation.json')
+		.add('logo', 'resources/images/logo-text.png')
+		.add('button', 'resources/images/button.png')
+		.add('starBg', 'resources/images/stars.png')
+		.add('images', 'resources/images/sprites.json')
+		.add('game-over', 'resources/images/game-over.png')
+		.add('resources/images/circle.png')
+		.add('pauseBtn', 'resources/images/pauseBtn.png')
+		.add('panel', 'resources/images/panel.png')
+		.add('stopBtn', 'resources/images/stopBtn.png')
+		.add('playBtn', 'resources/images/playBtn.png')
+		.add('replayBtn', 'resources/images/replayBtn.png')
+		.load(displaySplashScreen);
 
-	function displaySplashScreen(){
+	function displaySplashScreen() {
 		let splashScreen = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
 		app.stage.addChild(splashScreen);
 
 		setTimeout(() => {
-		    app.ticker.add(function fadeOut() {
-                if (splashScreen.alpha > 0) {
-                    splashScreen.alpha -= 0.03;
-                } else {
-                    app.ticker.remove(fadeOut);
+			app.ticker.add(function fadeOut() {
+				if (splashScreen.alpha > 0) {
+					splashScreen.alpha -= 0.03;
+				} else {
+					app.ticker.remove(fadeOut);
 					menu.init(app);
 					attachEventHandler(menu.buttons);
-                }
-            });
-        }, 2000);
+				}
+			});
+		}, 2000);
 	}
 }
 
-function attachEventHandler(buttons: Array<Sprite>){
-	for(let i = 0; i < buttons.length - 1; i++){
-		buttons[i].addListener('click', () => {
-			game.start(app);
-			addMovement();
-			panel.addPauseBtn(app);
+function attachEventHandler(buttons: Array<Sprite>) {
+	
+}
+
+let state: string;
+
+function gameLoop() {
+	switch (state) {
+		case 'menu':
+
+			break;
+		case 'play':
+		play = new Play(app);
+		addMovement();
+			/* panel.addPauseBtn(app);
 			run();
-		});
+			setInterval(() => {
+				addEnemy();
+			}, 2000); */
+			
+			movement();
+			
+			break;
+		case 'pause':
+			break;
+		case 'replay':
+			break;
+		case 'game over':
+			break;
 	}
 }
 
-function gameLoop(){
-
-}
-
-function addMovement(){
+function addMovement() {
 	window.addEventListener('keydown', keyDownHandler);
 	window.addEventListener('keyup', keyUpHandler);
 }
@@ -165,73 +182,27 @@ function resumeGame(){
 	showPanel(false);
 }
 */
+
+
+
 function run() {
 	/* intervalId = setInterval(addEnemy, 2000); */
 
-	player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
+	/* player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
 	player.position.set(75, app.view.height / 2);
 	player.velocityX = 0;
 	player.velocityY = 0;
-	app.stage.addChild(player);
+	app.stage.addChild(player); */
 
-	app.ticker.add(movement);
-	setInterval(()=>{
-		addEnemy();
-	}, 2000);
+
 }
 
 function movement() {
-		player.x += player.velocityX;
-		player.y += player.velocityY;
-
-		for (let i = enemies.length - 1; i >= 0; i--) {
-			let currentEnemy = enemies[i];
-			currentEnemy.x -= 4;
-			/* currentEnemy.y += app.randomNumber(-2, 2); */  //SHOULD I LEAVE IT IN OR NOT? DECIDE LATER
-
-			/* detectCollision(player, currentEnemy); */
-			if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
-				enemies = enemies.filter(e => e !== currentEnemy);
-				app.stage.removeChild(currentEnemy);
-			}
-		}
-		/*
-		for (let i = missles.length - 1; i >= 0; i--) {
-			let currentMissle: Character = missles[i];
-			currentMissle.x += 10;
-			if (currentMissle.x > app.view.width) {
-				missles = missles.filter(m => m !== currentMissle);
-			}
-		}
-
-		for (let j = 0; j < missles.length; j++) {
-			for (let k = 0; k < enemies.length; k++) {
-				if (missles[j] !== null && missles[j] !== undefined && enemies[k] !== null && enemies[k] !== undefined) {
-				checkTargetHit(missles[j], enemies[k]);
-				}
-			}
-		}
-
-		for (let i = 0; i < stars.length; i++) {
-			let currentStar: Star = stars[i];
-			currentStar.x -= 1;
-
-			if (currentStar.x < 0) {
-				currentStar.x *= -currentStar.speed;
-				currentStar.x += app.view.width;
-				currentStar.y = app.randomNumber(1, 600);
-			}
-		}*/
+	
 }
 
-function addEnemy() {
-	let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
-	enemy.scale.set(0.15, 0.15);
-	enemy.position.set(app.view.width, Application.randomNumber(enemy.height, 600 - enemy.height));
-	enemies.push(enemy);
-	app.stage.addChild(enemy);
-}
-/*
+
+
 function detectCollision(player: Character, enemy: any): void {
 	if (isCollision(player.getBounds(), enemy.getBounds())) {
 		if (doExplosion === true) {
@@ -314,7 +285,7 @@ function explode(object, enemy, isMissle: boolean) {
 	}
 }
 
-function checkTargetHit(missle: Character, enemy: Character) {
+function checkTargetHit(missle: Sprite, enemy: Character) {
 	if (isCollide(missle.getBounds(), enemy.getBounds())) {
 		missles = missles.filter(m => m !== missle);
 		app.stage.removeChild(missle);
@@ -362,26 +333,26 @@ function drawParticles(object: Character) {
 	}, 1200);
 }
 
-function isCollision(r1, r2) {
+function isCollision(player, enemy) {
 	let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
 
 	hit = false;
 
-	r1.centerX = r1.x + r1.width / 2;
-	r1.centerY = r1.y + r1.height / 4;
-	r2.centerX = r2.x + r2.width / 2;
-	r2.centerY = r2.y + r2.height / 2;
+	player.centerX = player.x + player.width / 2;
+	player.centerY = player.y + player.height / 4;
+	enemy.centerX = enemy.x + enemy.width / 2;
+	enemy.centerY = enemy.y + enemy.height / 2;
 
-	r1.halfWidth = r1.width / 2;
-	r1.halfHeight = r1.height / 4;
-	r2.halfWidth = r2.width / 2;
-	r2.halfHeight = r2.height / 2;
+	player.halfWidth = player.width / 2;
+	player.halfHeight = player.height / 4;
+	enemy.halfWidth = enemy.width / 2;
+	enemy.halfHeight = enemy.height / 2;
 
-	vx = r1.centerX - r2.centerX;
-	vy = r1.centerY - r2.centerY;
+	vx = player.centerX - enemy.centerX;
+	vy = player.centerY - enemy.centerY;
 
-	combinedHalfWidths = r1.halfWidth + r2.halfWidth;
-	combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+	combinedHalfWidths = player.halfWidth + enemy.halfWidth;
+	combinedHalfHeights = player.halfHeight + enemy.halfHeight;
 
 	if (Math.abs(vx) < combinedHalfWidths) {
 		if (Math.abs(vy) < combinedHalfHeights) {
@@ -431,45 +402,45 @@ function contain(sprite, container) {
 
 let canShoot: boolean = true;
 
-function keyDownHandler(e: any){
+function keyDownHandler(e: any) {
 	let speed = 5;
 	let offset = 4;
 	switch (e.keyCode) {
 		case 32:
-			if(canShoot){
+			if (canShoot) {
 				shoot();
 				canShoot = false;
 			}
 			break;
 		case 37:
-			if(player.x - speed * offset <= 0){
+			if (player.x - speed * offset <= 0) {
 				player.velocityX = 0;
-				player.x = speed * offset ;
-			}else{
+				player.x = speed * offset;
+			} else {
 				player.velocityX = -speed;
 			}
 			break;
 		case 38:
-			if(player.y - speed * offset <= 0){
+			if (player.y - speed * offset <= 0) {
 				player.velocityY = 0;
 				player.y = speed * offset;
-			}else{
+			} else {
 				player.velocityY = -speed;
 			}
 			break;
 		case 39:
-			if(player.x + player.width + speed * offset >= app.view.width ){
+			if (player.x + player.width + speed * offset >= app.view.width) {
 				player.velocityX = 0;
 				player.x = app.view.width - speed * offset - player.width;
-			}else{
+			} else {
 				player.velocityX = speed;
 			}
 			break;
 		case 40:
-			if(player.y + player.height + speed * offset >= app.view.height){
+			if (player.y + player.height + speed * offset >= app.view.height) {
 				player.velocityY = 0;
 				player.y = app.view.height - speed * offset - player.height;
-			}else{
+			} else {
 				player.velocityY = speed;
 			}
 			break;
@@ -478,7 +449,7 @@ function keyDownHandler(e: any){
 
 function keyUpHandler(e: any) {
 	switch (e.keyCode) {
-		case 32: 
+		case 32:
 			canShoot = true;
 			break;
 		case 37:

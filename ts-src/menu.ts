@@ -1,4 +1,5 @@
 import { Sprite } from "pixi.js";
+import Application from './application';
 
 export class Menu {
 
@@ -17,7 +18,7 @@ export class Menu {
         app.stage.addChild(logo);
     }
 
-    private loadButtons(app: PIXI.Application, startGame: void): void {
+    private loadButtons(app: PIXI.Application): void {
         this.buttons = new Array();
         for (let i = 0; i < 4; i++) {
             let button: Sprite = new Sprite(PIXI.loader.resources['button'].texture);
@@ -27,14 +28,17 @@ export class Menu {
             this.buttons.push(button);
             button.interactive = true;
             app.stage.addChild(button);
+            button.addListener('click', () => {
+                Application.state = 'play';
+            });
         }
         this.buttons[3].addListener('click', () =>{
             window.location.replace('https://www.google.com/');
         });
-        this.btnText(app);
+        this.addBtnText(app);
     }
 
-    private btnText(app: PIXI.Application): void {
+    private addBtnText(app: PIXI.Application): void {
         let i = 0;
         for (i; i < 4; i++) {
             let text: PIXI.Text;
