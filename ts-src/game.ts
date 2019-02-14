@@ -12,7 +12,10 @@ let message = new PIXI.Text('Score: 0');
 
 document.getElementById('display').appendChild(app.gameArea.view);
 
-PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+load();
+
+function load(){
+    PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
     .add('explosion', 'resources/images/explosion.json')
     .add('moon', 'resources/images/moon-animation.json')
     .add('logo', 'resources/images/logo-text.png')
@@ -28,22 +31,26 @@ PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
     .add('replayBtn', 'resources/images/replayBtn.png')
     .load(splashReady);
 
-function splashReady() {
-    let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
-    app.gameArea.stage.addChild(splashScreen);
-
-    setTimeout(() => {
-        app.gameArea.ticker.add(function fadeOut() {
-            if (splashScreen.alpha > 0) {
-
-                splashScreen.alpha -= 0.03;
-            } else {
-                app.gameArea.ticker.remove(fadeOut);
-                initMenu()
-            }
-        });
-    }, 2000);
+    function splashReady() {
+        let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
+        app.gameArea.stage.addChild(splashScreen);
+    
+        setTimeout(() => {
+            app.gameArea.ticker.add(function fadeOut() {
+                if (splashScreen.alpha > 0) {
+                    splashScreen.alpha -= 0.03;
+                } else {
+                    app.gameArea.ticker.remove(fadeOut);
+                    initMenu()
+                }
+            });
+        }, 2000);
+    }
 }
+
+
+
+
 
 function loadLogo() {
     let logo = new Sprite(PIXI.loader.resources['logo'].texture);
@@ -272,7 +279,6 @@ function run() {
 }
 
 function movement() {
-
     player.x += player.velocityX;
     player.y += player.velocityY;
 
@@ -370,11 +376,12 @@ function addBackToMenuBtn(gameOverSign: Sprite) {
 }
 
 function explode(object, enemy, isMissle: boolean) {
+    let frames: PIXI.Texture[] = new Array();
+    
     if (isMissle === false) {
         doExplosion = false;
         window.removeEventListener('keydown', keyDownHandler);
     }
-    let frames: PIXI.Texture[] = new Array();
 
     for (let i = 1; i <= 11; i++) {
         let index = i < 10 ? '0' + i : i;
@@ -405,10 +412,6 @@ function explode(object, enemy, isMissle: boolean) {
         };
     }
 }
-
-
-
-
 
 function drawParticles(object: Character) {
     let particles: Sprite[] = new Array();
