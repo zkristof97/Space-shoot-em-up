@@ -79,7 +79,8 @@ export default class Panel {
         replayBtn.anchor.set(0.5);
         replayBtn.interactive = true;
         replayBtn.addListener('click', () => {
-            Application.state = 'play';
+            Application.isReplay = true;
+            Application.state = 'stop';
         });
 
         Application.panelButtons.push(replayBtn, playBtn, stopBtn);

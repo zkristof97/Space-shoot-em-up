@@ -107,9 +107,11 @@ function gameLoop() {
         Application.missles = new Array();
         Application.enemies = new Array();
         Application.doExplosion = true;
-        if(Application.isGameOver === false){
+        if(Application.isReplay === true){
+            Application.isReplay = false;
+            Application.state = 'play';
+        } else if(Application.isGameOver === false){
             Application.state = 'menu';
-
         }else{
             Application.isGameOver = false;
             Application.state = '';
