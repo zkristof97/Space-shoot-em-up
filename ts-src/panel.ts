@@ -33,7 +33,6 @@ export default class Panel {
             this.addPanelBtns(app);
         }
         else {
-            debugger;
             Application.shouldPause = true;
             app.stage.removeChild(Application.panel);
 

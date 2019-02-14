@@ -30,7 +30,7 @@ export class Menu {
             app.stage.addChild(button);
             if(i === 3){
                 button.addListener('click', () =>{
-                    window.location.replace('https://www.google.com/');
+                    Application.state = 'exit';
                 });
             }else{
                 button.addListener('click', () => {

@@ -122,6 +122,10 @@ function gameLoop() {
         panel.deactivatePauseBtn();
         GameOver.display(app);
         Application.state = 'stop';
+    } else if(Application. state === 'exit'){
+        console.log('clicked');
+        window.location.replace('https://www.google.com/');
+        Application.state = '';
     }
 }
 
