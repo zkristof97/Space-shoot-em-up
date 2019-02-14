@@ -1,11 +1,11 @@
-import { Sprite } from "pixi.js";
 import Application from './application';
 
 export class Menu {
 
-    public buttons: Array<Sprite>;
+    public buttons: Array<PIXI.Sprite>;
 
     public init(app: PIXI.Application): void {
+        app.stage.removeChildren();
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
@@ -21,20 +21,24 @@ export class Menu {
     private loadButtons(app: PIXI.Application): void {
         this.buttons = new Array();
         for (let i = 0; i < 4; i++) {
-            let button: Sprite = new Sprite(PIXI.loader.resources['button'].texture);
+            let button: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['button'].texture);
             button.anchor.set(0.5);
             button.scale.set(0.5);
             button.position.set(app.view.width - button.width + 50, app.view.height / 2 + (i * 60))
             this.buttons.push(button);
             button.interactive = true;
             app.stage.addChild(button);
-            button.addListener('click', () => {
-                Application.state = 'play';
-            });
+            if(i === 3){
+                button.addListener('click', () =>{
+                    window.location.replace('https://www.google.com/');
+                });
+            }else{
+                button.addListener('click', () => {
+                    Application.state = 'play';
+                });
+            }
         }
-        this.buttons[3].addListener('click', () =>{
-            window.location.replace('https://www.google.com/');
-        });
+        
         this.addBtnText(app);
     }
 
@@ -55,7 +59,7 @@ export class Menu {
     }
 
     private loadBackground(app: PIXI.Application): void {
-        let background = new Sprite(PIXI.loader.resources['starBg'].texture);
+        let background = new PIXI.Sprite(PIXI.loader.resources['starBg'].texture);
         app.stage.addChild(background);
         this.animateMoon(app);
     }

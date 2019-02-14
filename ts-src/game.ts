@@ -3,76 +3,134 @@ import Character from './Character';
 import { Sprite } from 'pixi.js';
 import { Menu } from './menu';
 import Star from './star';
+import Panel from './panel';
+import GameOver from './gameOver';
 
-let score: number = 0;
-let missles: Character[] = new Array();
-let enemies: Character[] = new Array();
 let player: Character;
-/* let app: Application = new Application('resources/images/player-enemy-atlas.json'); */
 
 let appOptions: PIXI.ApplicationOptions = {
-	width: 800,
-	height: 600,
-	antialias: true,
-	transparent: false,
-	resolution: 1
+    width: 800,
+    height: 600,
+    antialias: true,
+    transparent: false,
+    resolution: 1
 };
 
-let app: PIXI.Application; 
-let doExplosion: boolean = true;
-let message = new PIXI.Text('Score: 0');
+let app: PIXI.Application;
 let menu: Menu;
+let panel: Panel;
 
 startGame();
 
-function startGame(){
+function startGame() {
     app = new PIXI.Application(appOptions);
     menu = new Menu();
+    panel = new Panel();
 
     document.getElementById('display').appendChild(app.view);
 
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
-    .add('explosion', 'resources/images/explosion.json')
-    .add('moon', 'resources/images/moon-animation.json')
-    .add('logo', 'resources/images/logo-text.png')
-    .add('button', 'resources/images/button.png')
-    .add('starBg', 'resources/images/stars.png')
-    .add('images', 'resources/images/sprites.json')
-    .add('game-over', 'resources/images/game-over.png')
-    .add('resources/images/circle.png')
-    .add('pauseBtn', 'resources/images/pauseBtn.png')
-    .add('panel', 'resources/images/panel.png')
-    .add('stopBtn', 'resources/images/stopBtn.png')
-    .add('playBtn', 'resources/images/playBtn.png')
-    .add('replayBtn', 'resources/images/replayBtn.png')
-    .load(splashReady);
+        .add('explosion', 'resources/images/explosion.json')
+        .add('moon', 'resources/images/moon-animation.json')
+        .add('logo', 'resources/images/logo-text.png')
+        .add('button', 'resources/images/button.png')
+        .add('starBg', 'resources/images/stars.png')
+        .add('images', 'resources/images/sprites.json')
+        .add('game-over', 'resources/images/game-over.png')
+        .add('resources/images/circle.png')
+        .add('pauseBtn', 'resources/images/pauseBtn.png')
+        .add('panel', 'resources/images/panel.png')
+        .add('stopBtn', 'resources/images/stopBtn.png')
+        .add('playBtn', 'resources/images/playBtn.png')
+        .add('replayBtn', 'resources/images/replayBtn.png')
+        .load(splashReady);
 
     function splashReady() {
         let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
         app.stage.addChild(splashScreen);
-    
+
         setTimeout(() => {
             app.ticker.add(function fadeOut() {
                 if (splashScreen.alpha > 0) {
                     splashScreen.alpha -= 0.03;
                 } else {
                     app.ticker.remove(fadeOut);
-                    menu.init(app);
                     app.ticker.add(gameLoop);
+                    Application.state = 'menu';
                 }
             });
         }, 2000);
     }
 }
 
-
-function gameLoop(){
-    if(Application.state === 'play'){
-        app.stage.removeChildren();
-        drawStars();
-        run();
+function gameLoop() {
+    if (Application.state === 'menu') {
+        menu.init(app);
         Application.state = '';
+        
+    } if(Application.state === 'replay'){
+        Application.score = 0;
+        noEnemySpawn();
+        app.ticker.remove(movements);
+        Application.state = 'play';
+    } else if (Application.state === 'play') {
+        console.log('play: ', Application.shouldPause);
+        
+        app.stage.removeChildren();
+        createPlayer();
+        drawStars();
+        addControl();
+        addScoreLabel();
+        app.ticker.add(movements);
+        panel.addPauseBtn(app);
+        spawnEnemy();
+        Application.state = '';
+    } else if (Application.state === 'pause') {
+        Application.shouldPause = false;
+        panel.showPanel(true, app);
+        noEnemySpawn();
+        app.ticker.remove(movements);
+        Application.state = '';
+        console.log('pause: ', Application.shouldPause);
+    } else if (Application.state === 'unpause') {
+        app.ticker.add(movements);
+        panel.showPanel(false, app);
+        spawnEnemy();
+        Application.state = '';
+        console.log('unpause: ', Application.shouldPause);
+    } else if (Application.state === 'stop'){
+        Application.score = 0;
+        Application.shouldPause = true;
+        panel.showPanel(false, app);
+        app.ticker.remove(movements);
+        noEnemySpawn();
+        Application.missles = new Array();
+        Application.enemies = new Array();
+        Application.doExplosion = true;
+        if(Application.isGameOver === false){
+            Application.state = 'menu';
+
+        }else{
+            Application.isGameOver = false;
+            Application.state = '';
+        }
+        console.log('stop: ', Application.shouldPause);
+    } else if (Application.state === 'gameOver'){
+        Application.isGameOver = true;
+        panel.deactivatePauseBtn();
+        GameOver.display(app);
+        Application.state = 'stop';
     }
+}
+
+function spawnEnemy() {
+    Application.intervalId = setInterval(() => {
+        addEnemy();
+    }, 2000);
+}
+
+function noEnemySpawn() {
+    clearInterval(Application.intervalId);
 }
 
 function drawStars() {
@@ -91,151 +149,71 @@ function drawStars() {
     }
 }
 
-let intervalId;
-
-function showPanel(shouldShow: boolean) {
-    if (shouldShow === true) {
-        Application.panel = new Sprite(PIXI.loader.resources['panel'].texture);
-        Application.panel.anchor.set(0.5);
-        Application.panel.position.set(app.view.width / 2, app.view.height / 2);
-        app.stage.addChild(Application.panel);
-        addPanelBtns();
-    }
-    else {
-        shouldPause = true;
-        app.stage.removeChild(Application.panel);
-
-        for (let i = 0; i < Application.panelButtons.length; i++) {
-            let currentButton = Application.panelButtons[i];
-            Application.panelButtons = Application.panelButtons.filter(p => p !== currentButton);
-            app.stage.removeChild(currentButton);
-        }
-
-        if (Application.panelButtons.length === 1) {
-            app.stage.removeChild(Application.panelButtons[0]);
-            Application.panelButtons.pop();
-        }
-
-    }
-}
-
-
-
-function addPanelBtns() {
-    let stopBtn = new Sprite(PIXI.loader.resources['stopBtn'].texture);
-    stopBtn.scale.set(0.8);
-    stopBtn.setParent(Application.panel);
-    stopBtn.position.set(stopBtn.parent.x - stopBtn.parent.width / 2 + 100, stopBtn.parent.y);
-    stopBtn.anchor.set(0.5);
-    stopBtn.interactive = true;
-    stopBtn.addListener('click', backToMenu);
-    app.stage.addChild(stopBtn);
-    Application.panelButtons.push(stopBtn);
-
-    let playBtn = new Sprite(PIXI.loader.resources['playBtn'].texture);
-    playBtn.scale.set(0.4);
-    playBtn.setParent(Application.panel);
-    playBtn.position.set(playBtn.parent.x, playBtn.parent.y);
-    playBtn.anchor.set(0.5);
-    playBtn.interactive = true;
-    playBtn.addListener('click', resumeGame);
-    app.stage.addChild(playBtn);
-    Application.panelButtons.push(playBtn);
-
-    let replayBtn = new Sprite(PIXI.loader.resources['replayBtn'].texture);
-    replayBtn.scale.set(0.32);
-    replayBtn.setParent(Application.panel);
-    replayBtn.position.set(replayBtn.parent.x + replayBtn.width * 1.5, replayBtn.parent.y);
-    replayBtn.anchor.set(0.5);
-    replayBtn.interactive = true;
-    replayBtn.addListener('click', () => {
-        console.log('click');
-
-    });
-    app.stage.addChild(replayBtn);
-    Application.panelButtons.push(replayBtn);
-}
-
-let shouldPause: boolean = true;
-
-function resumeGame() {
-    app.ticker.add(movement);
-    showPanel(false);
-}
-
-function run() {
-    let pauseBtn = new Sprite(PIXI.loader.resources['pauseBtn'].texture);
-    pauseBtn.anchor.set(1, 1);
-    pauseBtn.scale.set(0.1);
-    pauseBtn.tint = 0xFFFFFF;
-    pauseBtn.position.set(app.view.width - 15, app.view.height - 15);
-    pauseBtn.interactive = true;
-    pauseBtn.addListener('click', () => {
-        if (shouldPause === true) {
-            shouldPause = false;
-            app.ticker.remove(movement);
-            showPanel(true);
-        }
-        else {
-            resumeGame();
-        }
-    });
-
-    app.stage.addChild(pauseBtn);
-
-    message.style = new PIXI.TextStyle({
-        fill: 0xFFFFFF
-    });
-    message.position.set(10, 10);
-    app.stage.addChild(message);
-
+function addControl() {
     window.addEventListener('keydown', keyDownHandler);
     window.addEventListener('keyup', keyUpHandler);
+}
 
-
-    intervalId = setInterval(addEnemy, 2000);
-
+function createPlayer() {
     player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
     player.position.set(75, app.view.height / 2);
     player.velocityX = 0;
     player.velocityY = 0;
     app.stage.addChild(player);
-
-    app.ticker.add(movement);
 }
 
-function movement() {
+function addScoreLabel() {
+    Application.message = new PIXI.Text('Score: 0', {fill: 0xFFFFFF});
+    Application.message.position.set(10, 10);
+    app.stage.addChild(Application.message);
+}
+
+function movements() {
+    playerMovement();
+    enemyMovement();
+    parallaxMovement();
+    missleMovement();
+}
+
+function playerMovement(){
     player.x += player.velocityX;
     player.y += player.velocityY;
+}
 
-    for (let i = enemies.length - 1; i >= 0; i--) {
-        let currentEnemy = enemies[i];
+function enemyMovement(){
+    for (let i = Application.enemies.length - 1; i >= 0; i--) {
+        let currentEnemy = Application.enemies[i];
         currentEnemy.x -= 4;
-        /* currentEnemy.y += app.randomNumber(-2, 2); */ //SHOULD I LEAVE IT IN OR NOT? DECIDE LATER
-
+        
         detectCollision(player, currentEnemy);
+
         if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
-            enemies = enemies.filter(e => e !== currentEnemy);
+            Application.enemies = Application.enemies.filter(e => e !== currentEnemy);
             app.stage.removeChild(currentEnemy);
         }
     }
+}
 
-    for (let i = missles.length - 1; i >= 0; i--) {
-        let currentMissle: Character = missles[i];
+function missleMovement(){
+    for (let i = Application.missles.length - 1; i >= 0; i--) {
+        let currentMissle: PIXI.Sprite = Application.missles[i];
         currentMissle.x += 10;
+        
         if (currentMissle.x > app.view.width) {
-            missles = missles.filter(m => m !== currentMissle);
+            Application.missles = Application.missles.filter(m => m !== currentMissle);
         }
     }
 
-    for (let j = 0; j < missles.length; j++) {
-        for (let k = 0; k < enemies.length; k++) {
-            if (missles[j] !== null && missles[j] !== undefined && enemies[k] !== null && enemies[k] !== undefined) {
-                checkTargetHit(missles[j], enemies[k]);
+    for (let j = 0; j < Application.missles.length; j++) {
+        for (let k = 0; k < Application.enemies.length; k++) {
+            if (Application.missles[j] !== null && Application.missles[j] !== undefined && Application.enemies[k] !== null && Application.enemies[k] !== undefined) {
+                checkTargetHit(Application.missles[j], Application.enemies[k]);
             }
         }
     }
+}
 
+function parallaxMovement(){
     for (let i = 0; i < Application.stars.length; i++) {
         let currentStar: Star = Application.stars[i];
         currentStar.x -= 1;
@@ -249,63 +227,26 @@ function movement() {
 }
 
 function addEnemy() {
-    let enemy = new Character(PIXI.loader.resources['images'].textures['alien.png']);
+    let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
     enemy.scale.set(0.15, 0.15);
     enemy.position.set(app.view.width, Application.randomNumber(enemy.height, 600 - enemy.height));
-    enemies.push(enemy);
+    Application.enemies.push(enemy);
     app.stage.addChild(enemy);
 }
 
-function detectCollision(player: Character, enemy: any): void {
+function detectCollision(player: Character, enemy: PIXI.Sprite): void {
     if (isCollision(player.getBounds(), enemy.getBounds())) {
-        if (doExplosion === true) {
+        if (Application.doExplosion === true) {
             explode(player, enemy, false);
         }
     }
 }
 
-function displayGameOver() {
-    let gameOver = new Sprite(PIXI.loader.resources['game-over'].texture);
-    gameOver.anchor.set(0.5);
-    gameOver.x = app.view.width / 2;
-    gameOver.y = app.view.height / 2;
-    app.stage.addChild(gameOver);
-    addBackToMenuBtn(gameOver);
-}
-
-function backToMenu() {
-    clearInterval(intervalId);
-    missles = new Array();
-    enemies = new Array();
-    doExplosion = true;
-    app.stage.removeChildren();
-    score = 0;
-
-    message.text = 'Score: ' + score;
-    menu.init(app);
-}
-
-function addBackToMenuBtn(gameOverSign: Sprite) {
-    let button = new Sprite(PIXI.loader.resources['button'].texture);
-    button.anchor.set(0.5);
-    button.scale.set(0.5);
-    button.position.set(app.view.width / 2, app.view.height / 2 + gameOverSign.height / 2 + button.height);
-    button.interactive = true;
-    button.addListener('click', () => {
-        backToMenu();
-    });
-    let text = new PIXI.Text('Back');
-    text.anchor.set(0.5);
-    text.position.set(button.x, button.y);
-
-    app.stage.addChild(button, text);
-}
-
 function explode(object, enemy, isMissle: boolean) {
     let frames: PIXI.Texture[] = new Array();
-    
+
     if (isMissle === false) {
-        doExplosion = false;
+        Application.doExplosion = false;
         window.removeEventListener('keydown', keyDownHandler);
     }
 
@@ -333,8 +274,8 @@ function explode(object, enemy, isMissle: boolean) {
     else {
         anim.onComplete = () => {
             app.stage.removeChild(anim);
-            app.ticker.remove(movement);
-            displayGameOver();
+            app.ticker.remove(movements);
+            Application.state = 'gameOver';
         };
     }
 }
@@ -404,31 +345,30 @@ function isCollision(player, enemy) {
     return hit;
 };
 
-function checkTargetHit(missle: Character, enemy: Character) {
+function checkTargetHit(missle: PIXI.Sprite, enemy: PIXI.Sprite) {
     if (isCollide(missle.getBounds(), enemy.getBounds()) === true) {
-        missles = missles.filter(m => m !== missle);
+        Application.missles = Application.missles.filter(m => m !== missle);
         app.stage.removeChild(missle);
 
         explode(missle, enemy, true);
 
-        enemies = enemies.filter(e => e !== enemy);
+        Application.enemies = Application.enemies.filter(e => e !== enemy);
         app.stage.removeChild(enemy);
 
-        score++;
-        message.text = 'Score: ' + score;
+        Application.score++;
+        Application.message.text = 'Score: ' + Application.score;
     }
 }
-
 
 function isCollide(missle, enemy) {
     return missle.x + missle.width / 2 >= enemy.x && missle.x <= enemy.x + enemy.width && missle.y + missle.height >= enemy.y && missle.y <= enemy.y + enemy.height;
 }
 
 function shoot() {
-    let missle = new Character(PIXI.loader.resources['images'].textures['missle.png']);
+    let missle = new PIXI.Sprite(PIXI.loader.resources['images'].textures['missle.png']);
     missle.position.set(player.x + player.x / 2, player.y + player.height / 2);
     app.stage.addChild(missle);
-    missles.push(missle);
+    Application.missles.push(missle);
 }
 
 let canShoot: boolean = true;
@@ -462,23 +402,23 @@ function keyDownHandler(e: any) {
                 shoot();
                 canShoot = false;
             }
-            checkPosition(speed,offset);            
+            checkPosition(speed, offset);
             break;
         case 37:
-                player.velocityX = -speed;
-                checkPosition(speed,offset);
+            player.velocityX = -speed;
+            checkPosition(speed, offset);
             break;
         case 38:
-                player.velocityY = -speed;
-                checkPosition(speed,offset);
+            player.velocityY = -speed;
+            checkPosition(speed, offset);
             break;
         case 39:
-                player.velocityX = speed;
-                checkPosition(speed,offset);
+            player.velocityX = speed;
+            checkPosition(speed, offset);
             break;
         case 40:
-                player.velocityY = speed;
-                checkPosition(speed,offset);
+            player.velocityY = speed;
+            checkPosition(speed, offset);
             break;
     }
 }
