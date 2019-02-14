@@ -1,4 +1,5 @@
 import Star from "./star";
+import Character from "./Character";
 
 export default class Application{
     public static state: string = '';
@@ -15,6 +16,8 @@ export default class Application{
     public static message: PIXI.Text;
     public static isGameOver: boolean = false;
     public static isReplay: boolean = false;
+    public static player: Character;
+    public static canShoot: boolean = true;
     
     public static randomNumber(min, max): number{
         return Math.floor(Math.random() * (max - min + 1)) + min;
