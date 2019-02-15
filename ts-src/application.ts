@@ -8,7 +8,7 @@ export default class Application{
     public static panelButtons: PIXI.Sprite[] = new Array();
     public static shouldPause: boolean = true;
     public static intervalId: number = 0;
-    public static missles: Array<PIXI.Sprite> = new Array();
+    public static missles: Array<PIXI.extras.AnimatedSprite> = new Array();
     public static enemies: Array<PIXI.Sprite> = new Array();
     public static doExplosion: boolean = true;
     public static score: number = 0;

@@ -1,4 +1,5 @@
 import Application from './application';
+import Animation from './animation';
 import Menu from './menu';
 import Star from './star';
 import Panel from './panel';
@@ -41,6 +42,7 @@ function startGame() {
         .add('stopBtn', 'resources/images/stopBtn.png')
         .add('playBtn', 'resources/images/playBtn.png')
         .add('replayBtn', 'resources/images/replayBtn.png')
+        .add('missles', 'resources/images/missles.json')
         .load(splashReady);
 
     function splashReady() {
@@ -239,7 +241,7 @@ function keyDownHandler(e: any) {
     switch (e.keyCode) {
         case 32:
             if (Application.canShoot === true) {
-                GamePlay.shoot(app);
+                Animation.missle(app);
                 Application.canShoot = false;
             }
             GamePlay.checkPosition(speed, offset, app);

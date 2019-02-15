@@ -55,11 +55,11 @@ export default class GamePlay {
     }
 
     public static shoot(app: PIXI.Application) {
-        let missle = new PIXI.Sprite(PIXI.loader.resources['images'].textures['missle.png']);
+        /* let missle = new PIXI.Sprite(PIXI.loader.resources['images'].textures['missle.png']);
         missle.position.set(Application.player.x + Application.player.width / 2, Application.player.y + Application.player.height / 2);
         app.stage.addChild(missle);
 
-        Application.missles.push(missle);
+        Application.missles.push(missle); */
     }
 
     public static checkPosition(speed: number, offset: number, app: PIXI.Application) {

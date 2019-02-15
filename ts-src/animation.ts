@@ -16,6 +16,23 @@ export default class Animation{
         app.stage.addChild(animation);
     }
 
+    public static missle(app: PIXI.Application){
+        let frames: PIXI.Texture[] = new Array();
+        for (let i = 4; i <= 7; i++) {
+
+            frames.push(PIXI.Texture.fromFrame('missle' + i + '.png'));
+        }
+
+        let missle = new PIXI.extras.AnimatedSprite(frames);
+        missle.position.set(Application.player.x + Application.player.width / 2, Application.player.y + Application.player.height / 2);
+        missle.width = missle.width / 2;
+        missle.animationSpeed = 16/60;
+        missle.play();
+        app.stage.addChild(missle);
+
+        Application.missles.push(missle);
+    }
+
     public static explode(player: Character, enemy: PIXI.Sprite, app:PIXI.Application) {
         let frames: PIXI.Texture[] = new Array();
     
