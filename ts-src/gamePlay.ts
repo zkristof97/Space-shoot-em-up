@@ -167,32 +167,23 @@ export default class GamePlay {
             }
         } */
 
-        
-        
-        
-
-            app.ticker.add(function particlesFade(){
-                for (let j = 0; j < particles.length; j++) {
-                    if(Application.randomNumber(0,1) === 0){
-                        particles[j].x++;
-                    }else{
-                        particles[j].y++;
-                    }
+        app.ticker.add(function particlesFade(){
+            for (let j = 0; j < particles.length; j++) {
+                if(Application.randomNumber(0,1) === 0){
+                    particles[j].x--;
+                }else{
+                    particles[j].y++;
                 }
-                /* for (let j = 0; j < particles.length; j++) {
-                    if(particles[j].alpha <= 0 ){
-                        app.ticker.remove(particlesFade);
-                    }
-                    particles[j].alpha -= 0.1;
-                } */
-            });
-           
-            /* for (let i = 0; i < particles.length; i++) {
-
-                particles = particles.filter(e => e !== particles[i]);
-            } */
-            /* app.stage.removeChild(container); */
-     
+                if(particles[j].x < 0 || particles[j].y > container.mask.height){
+                    container.removeChild(particles[j]);
+                    particles = particles.filter(p => p !== particles[j]);
+                }
+            }
+            if(particles.length === 0){
+                app.ticker.remove(particlesFade);
+                app.stage.removeChild(container);
+            }
+        });
     }
 
 }
