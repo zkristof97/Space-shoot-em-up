@@ -1,4 +1,5 @@
 import Application from './application';
+import Animation from './animation';
 
 export class Menu {
 
@@ -61,20 +62,6 @@ export class Menu {
     private loadBackground(app: PIXI.Application): void {
         let background = new PIXI.Sprite(PIXI.loader.resources['starBg'].texture);
         app.stage.addChild(background);
-        this.animateMoon(app);
-    }
-
-    private animateMoon(app: PIXI.Application): void {
-        let frames: PIXI.Texture[] = new Array();
-        for (let i = 1; i <= 48; i++) {
-            let index = i < 10 ? '0' + i : i;
-
-            frames.push(PIXI.Texture.fromFrame(index + '.png'));
-        }
-        let animation = new PIXI.extras.AnimatedSprite(frames);
-        animation.scale.set(0.9);
-        animation.animationSpeed = 10 / 60;
-        animation.play();
-        app.stage.addChild(animation);
+        Animation.moon(app);
     }
 }
