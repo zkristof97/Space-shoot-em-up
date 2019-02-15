@@ -31,7 +31,6 @@ function startGame() {
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
         .add('resources/images/moon-test.json')
         .add('explosion', 'resources/images/explosion.json')
-        .add('moon', 'resources/images/moon-animation.json')
         .add('logo', 'resources/images/logo-text.png')
         .add('button', 'resources/images/button.png')
         .add('starBg', 'resources/images/stars.png')
@@ -66,6 +65,9 @@ function startGame() {
 
 function gameLoop() {
     if (Application.state === 'menu') {
+        /* let foo: HTMLAudioElement = new Audio('resources/sounds/background-music.mp3');
+        foo.volume = 0.2;
+        foo.play(); */
         menu.init(app);
         Application.state = '';
 
@@ -141,6 +143,9 @@ function movements() {
 function playerMovement() {
     Application.player.x += Application.player.velocityX;
     Application.player.y += Application.player.velocityY;
+    console.log('x: ', Application.player.x, 'y: ', Application.player.y);
+    
+    GamePlay.checkPosition(5,4,app);
 }
 
 function enemyMovement() {
@@ -217,20 +222,20 @@ function parallaxMovement() {
 } */
 
 function keyUpHandler(e: any): void {
-    switch (e.keyCode) {
-        case 32:
+    switch (e.key) {
+        case ' ':
             Application.canShoot = true;
             break;
-        case 37:
+        case 'ArrowLeft':
             Application.player.velocityX = 0;
             break;
-        case 38:
+        case 'ArrowUp':
             Application.player.velocityY = 0;
             break;
-        case 39:
+        case 'ArrowRight':
             Application.player.velocityX = 0;
             break;
-        case 40:
+        case 'ArrowDown':
             Application.player.velocityY = 0;
             break;
     }
@@ -239,29 +244,24 @@ function keyUpHandler(e: any): void {
 function keyDownHandler(e: any) {
     let speed = 5;
     let offset = 4;
-    switch (e.keyCode) {
-        case 32:
+    switch (e.key) {
+        case ' ':
             if (Application.canShoot === true) {
                 Animation.missle(app);
                 Application.canShoot = false;
             }
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 37:
+        case 'ArrowLeft':
             Application.player.velocityX = -speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 38:
+        case 'ArrowUp':
             Application.player.velocityY = -speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 39:
+        case 'ArrowRight':
             Application.player.velocityX = speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 40:
+        case 'ArrowDown':
             Application.player.velocityY = speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
     }
 }

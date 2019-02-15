@@ -54,22 +54,17 @@ export default class GamePlay {
         app.stage.addChild(Application.player);
     }
 
-    public static shoot(app: PIXI.Application) {
-        /* let missle = new PIXI.Sprite(PIXI.loader.resources['images'].textures['missle.png']);
-        missle.position.set(Application.player.x + Application.player.width / 2, Application.player.y + Application.player.height / 2);
-        app.stage.addChild(missle);
-
-        Application.missles.push(missle); */
-    }
-
     public static checkPosition(speed: number, offset: number, app: PIXI.Application) {
         if (Application.player.x - speed * offset <= 0) {
             Application.player.x = speed * offset;
-        } else if (Application.player.y - speed * offset <= 0) {
+        } 
+        if (Application.player.y  <=  speed * offset) {
             Application.player.y = speed * offset;
-        } else if (Application.player.x + Application.player.width + speed * offset >= app.view.width) {
+        }
+        if (Application.player.x + Application.player.width + speed * offset >= app.view.width) {
             Application.player.x = app.view.width - speed * offset - Application.player.width;
-        } else if (Application.player.y + Application.player.height + speed * offset >= app.view.height) {
+        }
+        if (Application.player.y + Application.player.height + speed * offset >= app.view.height) {
             Application.player.y = app.view.height - speed * offset - Application.player.height;
         }
     }
