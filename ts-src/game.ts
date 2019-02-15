@@ -1,6 +1,5 @@
 import Application from './application';
-import { Sprite } from 'pixi.js';
-import { Menu } from './menu';
+import Menu from './menu';
 import Star from './star';
 import Panel from './panel';
 import GameOver from './gameOver';
@@ -45,7 +44,7 @@ function startGame() {
         .load(splashReady);
 
     function splashReady() {
-        let splashScreen = new Sprite(PIXI.loader.resources['splash-screen'].texture);
+        let splashScreen = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
         app.stage.addChild(splashScreen);
 
         setTimeout(() => {

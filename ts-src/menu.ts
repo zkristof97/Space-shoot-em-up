@@ -1,7 +1,7 @@
 import Application from './application';
 import Animation from './animation';
 
-export class Menu {
+export default class Menu {
 
     public buttons: Array<PIXI.Sprite>;
 
