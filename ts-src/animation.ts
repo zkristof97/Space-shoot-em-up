@@ -3,7 +3,7 @@ import Character from "./Character";
 
 export default class Animation{
     public static moon(app: PIXI.Application): void {
-        let frames: PIXI.Texture[] = new Array();
+        /* let frames: PIXI.Texture[] = new Array();
         for (let i = 1; i <= 48; i++) {
             let index = i < 10 ? '0' + i : i;
 
@@ -13,7 +13,23 @@ export default class Animation{
         animation.scale.set(0.9);
         animation.animationSpeed = 10 / 60;
         animation.play();
+        app.stage.addChild(animation); */
+
+        let frames: PIXI.Texture[] = new Array();
+        for (let i = 1; i <= 48; i++) {
+
+            frames.push(PIXI.Texture.fromFrame('moon' + i + '.png'));
+        }
+
+        let animation = new PIXI.extras.AnimatedSprite(frames);
+        animation.scale.set(0.9);
+        animation.animationSpeed = 10 / 60;
+        animation.play();
         app.stage.addChild(animation);
+
+        /* let moon = new PIXI.Sprite(PIXI.loader.resources['nevtelen'].texture);
+        moon.scale.set(0.7);
+        app.stage.addChild(moon); */
     }
 
     public static missle(app: PIXI.Application){

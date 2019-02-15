@@ -29,6 +29,7 @@ function startGame() {
     document.getElementById('display').appendChild(app.view);
 
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+        .add('resources/images/moon-test.json')
         .add('explosion', 'resources/images/explosion.json')
         .add('moon', 'resources/images/moon-animation.json')
         .add('logo', 'resources/images/logo-text.png')
@@ -159,7 +160,7 @@ function enemyMovement() {
 function missleMovement() {
     for (let i = Application.missles.length - 1; i >= 0; i--) {
         let currentMissle: PIXI.Sprite = Application.missles[i];
-        currentMissle.x += 10;
+        currentMissle.x += 7;
 
         if (currentMissle.x > app.view.width) {
             Application.missles = Application.missles.filter(m => m !== currentMissle);
