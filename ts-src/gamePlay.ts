@@ -88,38 +88,6 @@ export default class GamePlay {
         }
     }
 
-   /*  private static drawParticles(object: PIXI.Sprite, app: PIXI.Application) {
-        let particles: Array<PIXI.Sprite> = new Array();
-        let container = new PIXI.Container();
-
-        for (let i = 0; i < object.height; i += 5) {
-            for (let j = 0; j < object.width; j += 5) {
-                let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
-                particle.position.set(j, i);
-                particle.tint = 0xff0000;
-                particle.scale.set(0.01);
-                particles.push(particle);
-                container.addChild(particle);
-            }
-        }
-
-        app.stage.addChild(container);
-        container.position.set(object.x, object.y);
-
-        setTimeout(() => {
-            for (let i = 1; i >= 0; i -= 0.1) {
-                for (let j = 0; j < particles.length; j++) {
-                    particles[j].alpha = i;
-                }
-            }
-            for (let i = 0; i < particles.length; i++) {
-
-                particles = particles.filter(e => e !== particles[i]);
-            }
-            app.stage.removeChild(container);
-        }, 1200);
-    } */
-
     private static drawParticles(enemy: PIXI.Sprite, app: PIXI.Application) {
         let particles: Array<PIXI.Sprite> = new Array();
         let container = new PIXI.Container();
@@ -135,37 +103,11 @@ export default class GamePlay {
             }
         }
 
-        /* container.pivot.set(0.5); */
         container.position.set(enemy.x, enemy.y);
         app.stage.addChild(container);
         let mask = new PIXI.Graphics().beginFill(0xFFFFF).drawCircle(container.width / 2, container.height / 2, 35).endFill();
-        /* let mask:PIXI.Sprite = new PIXI.Sprite(new PIXI.Graphics().beginFill(0xFFFFF).drawCircle(container.x /2,container.y /2, 250).endFill().generateCanvasTexture()); */
-        /* mask.position.set(250,250); */
         container.addChild(mask);
         container.mask = mask;
-        debugger;
-        /* container.mask = new PIXI.Graphics().drawCircle(container.x,container.y, 50); */
-        
-
-        /* for (let y = 0; y < enemy.height; y += 10) {
-            let from = 0;
-            let until = 0;
-            if(y <= enemy.height/2){
-                from = 0;
-                until = enemy.width;
-            }else{
-                from = enemy.width / 3;
-                until = from * 2;  
-            }
-            for (let x = from; x <= until; x += 5) {
-                let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
-                particle.position.set(x, -y);
-                particle.tint = 0xff0000;
-                particle.scale.set(0.01);
-                particles.push(particle);
-                container.addChild(particle);
-            }
-        } */
 
         app.ticker.add(function particlesFade(){
             for (let j = 0; j < particles.length; j++) {
