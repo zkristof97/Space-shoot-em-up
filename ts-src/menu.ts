@@ -3,6 +3,7 @@ import Animation from './animation';
 
 export default class Menu {
 
+    public static backgroundMusic: HTMLAudioElement;
     public buttons: Array<PIXI.Sprite>;
 
     public init(app: PIXI.Application): void {
@@ -10,6 +11,7 @@ export default class Menu {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
+        Animation.alienSpawn(app);
     }
 
     private loadLogo(app: PIXI.Application): void {

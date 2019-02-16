@@ -1,0 +1,44 @@
+{"frames": {
+
+"missle4.png":
+{
+	"frame": {"x":0,"y":0,"w":300,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":32},
+	"sourceSize": {"w":300,"h":32}
+},
+"missle5.png":
+{
+	"frame": {"x":300,"y":0,"w":300,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":32},
+	"sourceSize": {"w":300,"h":32}
+},
+"missle6.png":
+{
+	"frame": {"x":600,"y":0,"w":300,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":32},
+	"sourceSize": {"w":300,"h":32}
+},
+"missle7.png":
+{
+	"frame": {"x":900,"y":0,"w":300,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":32},
+	"sourceSize": {"w":300,"h":32}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "missles.png",
+	"format": "RGBA8888",
+	"size": {"w":1200,"h":32},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:55f2b7fd338b877ea5987ee5432275ac:6210a8e4231a79c88198fc4ecc4008bf:d331b283859e8b49173a20dcf049b850$"
+}
+}

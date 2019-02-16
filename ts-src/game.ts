@@ -1,10 +1,11 @@
 import Application from './application';
+import Animation from './animation';
 import Menu from './menu';
-import Star from './star';
 import Panel from './panel';
 import GameOver from './gameOver';
 import GamePlay from './gamePlay';
 import HitTest from './hitTest';
+import Sounds from './sound';
 
 let appOptions: PIXI.ApplicationOptions = {
     width: 800,
@@ -28,8 +29,9 @@ function startGame() {
     document.getElementById('display').appendChild(app.view);
 
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+        .add('background', 'resources/images/parallaxImgs.json')
+        .add('resources/images/moon.json')
         .add('explosion', 'resources/images/explosion.json')
-        .add('moon', 'resources/images/moon-animation.json')
         .add('logo', 'resources/images/logo-text.png')
         .add('button', 'resources/images/button.png')
         .add('starBg', 'resources/images/stars.png')
@@ -41,6 +43,13 @@ function startGame() {
         .add('stopBtn', 'resources/images/stopBtn.png')
         .add('playBtn', 'resources/images/playBtn.png')
         .add('replayBtn', 'resources/images/replayBtn.png')
+        .add('missles', 'resources/images/missles.json')
+        .add('menuSound', 'resources/sounds/menu_background.mp3')
+        .add('backgroundSound', 'resources/sounds/background-music.mp3')
+        .add('gameOverSound', 'resources/sounds/game_over.mp3')
+        .add('engineSound', 'resources/sounds/engine_sound.mp3')
+        .add('explosionSound', 'resources/sounds/explosion.mp3')
+        .add('missleSound', 'resources/sounds/missle_shoot.mp3')
         .load(splashReady);
 
     function splashReady() {
@@ -53,8 +62,8 @@ function startGame() {
                     splashScreen.alpha -= 0.03;
                 } else {
                     app.ticker.remove(fadeOut);
-                    app.ticker.add(gameLoop);
                     Application.state = 'menu';
+                    app.ticker.add(gameLoop);
                 }
             });
         }, 2000);
@@ -62,6 +71,8 @@ function startGame() {
 }
 
 function gameLoop() {
+    Sounds.stopSounds();
+    Sounds.playSounds();
     if (Application.state === 'menu') {
         menu.init(app);
         Application.state = '';
@@ -72,14 +83,15 @@ function gameLoop() {
         app.ticker.remove(movements);
         Application.state = 'play';
     } else if (Application.state === 'play') {
+        Animation.stopAlienSpawn();
         app.stage.removeChildren();
-        GamePlay.createPlayer(app);
         GamePlay.drawStars(app);
         addControl();
         GamePlay.addScoreLabel(app);
         app.ticker.add(movements);
         panel.addPauseBtn(app);
         GamePlay.spawnEnemy(app);
+        GamePlay.createPlayer(app);
         Application.state = '';
     } else if (Application.state === 'pause') {
         Application.shouldPause = false;
@@ -129,15 +141,24 @@ function addControl() {
 }
 
 function movements() {
+    backgroundMovement();
     playerMovement();
     enemyMovement();
-    parallaxMovement();
     missleMovement();
+}
+
+function backgroundMovement(){
+    GamePlay.parallaxImgs
+    for(let i = 0; i < GamePlay.parallaxImgs.length; i++){
+        GamePlay.parallaxImgs[i].tilePosition.x -= GamePlay.parallaxImgs[i].moveBy;
+    }
 }
 
 function playerMovement() {
     Application.player.x += Application.player.velocityX;
     Application.player.y += Application.player.velocityY;
+    
+    GamePlay.checkPosition(Application.speed, Application.offset, app);
 }
 
 function enemyMovement() {
@@ -157,7 +178,7 @@ function enemyMovement() {
 function missleMovement() {
     for (let i = Application.missles.length - 1; i >= 0; i--) {
         let currentMissle: PIXI.Sprite = Application.missles[i];
-        currentMissle.x += 10;
+        currentMissle.x += 7;
 
         if (currentMissle.x > app.view.width) {
             Application.missles = Application.missles.filter(m => m !== currentMissle);
@@ -169,19 +190,6 @@ function missleMovement() {
             if (Application.missles[j] !== null && Application.missles[j] !== undefined && Application.enemies[k] !== null && Application.enemies[k] !== undefined) {
                 GamePlay.checkTargetHit(Application.missles[j], Application.enemies[k], app);
             }
-        }
-    }
-}
-
-function parallaxMovement() {
-    for (let i = 0; i < Application.stars.length; i++) {
-        let currentStar: Star = Application.stars[i];
-        currentStar.x -= 1;
-
-        if (currentStar.x < 0) {
-            currentStar.x *= -currentStar.speed;
-            currentStar.x += app.view.width;
-            currentStar.y = Application.randomNumber(1, 600);
         }
     }
 }
@@ -214,20 +222,20 @@ function parallaxMovement() {
 } */
 
 function keyUpHandler(e: any): void {
-    switch (e.keyCode) {
-        case 32:
+    switch (e.key) {
+        case ' ':
             Application.canShoot = true;
             break;
-        case 37:
+        case 'ArrowLeft':
             Application.player.velocityX = 0;
             break;
-        case 38:
+        case 'ArrowUp':
             Application.player.velocityY = 0;
             break;
-        case 39:
+        case 'ArrowRight':
             Application.player.velocityX = 0;
             break;
-        case 40:
+        case 'ArrowDown':
             Application.player.velocityY = 0;
             break;
     }
@@ -235,30 +243,25 @@ function keyUpHandler(e: any): void {
 
 function keyDownHandler(e: any) {
     let speed = 5;
-    let offset = 4;
-    switch (e.keyCode) {
-        case 32:
+    Sounds.playEngineSound();    
+    switch (e.key) {
+        case ' ':
             if (Application.canShoot === true) {
-                GamePlay.shoot(app);
+                Animation.missle(app);
                 Application.canShoot = false;
             }
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 37:
+        case 'ArrowLeft':
             Application.player.velocityX = -speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 38:
+        case 'ArrowUp':
             Application.player.velocityY = -speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 39:
+        case 'ArrowRight':
             Application.player.velocityX = speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
-        case 40:
+        case 'ArrowDown':
             Application.player.velocityY = speed;
-            GamePlay.checkPosition(speed, offset, app);
             break;
     }
 }

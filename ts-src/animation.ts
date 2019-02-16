@@ -1,24 +1,65 @@
 import Application from "./application";
 import Character from "./Character";
+import Sounds from "./sound";
+import GamePlay from "./gamePlay";
 
 export default class Animation{
+    public static intervalId:number;
+
     public static moon(app: PIXI.Application): void {
         let frames: PIXI.Texture[] = new Array();
         for (let i = 1; i <= 48; i++) {
-            let index = i < 10 ? '0' + i : i;
 
-            frames.push(PIXI.Texture.fromFrame(index + '.png'));
+            frames.push(PIXI.Texture.fromFrame('moon' + i + '.png'));
         }
+
         let animation = new PIXI.extras.AnimatedSprite(frames);
         animation.scale.set(0.9);
-        animation.animationSpeed = 10 / 60;
+        animation.animationSpeed = 7 / 60;
         animation.play();
         app.stage.addChild(animation);
     }
 
+    public static missle(app: PIXI.Application){
+        let frames: PIXI.Texture[] = new Array();
+        for (let i = 4; i <= 7; i++) {
+
+            frames.push(PIXI.Texture.fromFrame('missle' + i + '.png'));
+        }
+
+        let missle = new PIXI.extras.AnimatedSprite(frames);
+        missle.position.set(Application.player.x + Application.player.width / 2, Application.player.y + Application.player.height / 2);
+        missle.width = missle.width / 2;
+        missle.animationSpeed = 16/60;
+        missle.play();
+        Sounds.playMissleSound();
+
+        app.stage.addChild(missle);
+
+        Application.missles.push(missle);
+    }
+
+    public static stopAlienSpawn(){
+        clearInterval(this.intervalId);
+    }
+
+    public static alienSpawn(app: PIXI.Application){
+        this.intervalId = setInterval( () =>{
+            let alien = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
+            alien.scale.set(0.15);
+            alien.position.set(Application.randomNumber(100,400), Application.randomNumber(400, app.view.height - alien.height));
+            app.stage.addChild(alien);
+            setTimeout(() =>{
+                app.stage.removeChild(alien);
+                GamePlay.drawParticles(alien, app)
+            }, 450);
+        }, 2300);
+    }
+
     public static explode(player: Character, enemy: PIXI.Sprite, app:PIXI.Application) {
         let frames: PIXI.Texture[] = new Array();
-    
+        
+        Sounds.playExplosionSound(0.5);
         Application.doExplosion = false;
     
         app.stage.removeChild(player);
