@@ -30,7 +30,7 @@ export default class Sounds{
         this.explosionSound.play();
     }
 
-    public static async playSounds(){
+    public static playSounds(){
         switch (Application.state) {
             case 'menu':
                 this.menuSound = new Audio(PIXI.loader.resources['menuSound'].url);

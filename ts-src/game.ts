@@ -1,7 +1,6 @@
 import Application from './application';
 import Animation from './animation';
 import Menu from './menu';
-import Star from './star';
 import Panel from './panel';
 import GameOver from './gameOver';
 import GamePlay from './gamePlay';
@@ -30,8 +29,8 @@ function startGame() {
     document.getElementById('display').appendChild(app.view);
 
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
-        .add('bg', 'resources/images/parallax-space-backgound.png')
-        .add('resources/images/moon-test.json')
+        .add('background', 'resources/images/parallaxImgs.json')
+        .add('resources/images/moon.json')
         .add('explosion', 'resources/images/explosion.json')
         .add('logo', 'resources/images/logo-text.png')
         .add('button', 'resources/images/button.png')
@@ -63,8 +62,8 @@ function startGame() {
                     splashScreen.alpha -= 0.03;
                 } else {
                     app.ticker.remove(fadeOut);
-                    app.ticker.add(gameLoop);
                     Application.state = 'menu';
+                    app.ticker.add(gameLoop);
                 }
             });
         }, 2000);
@@ -142,10 +141,17 @@ function addControl() {
 }
 
 function movements() {
+    backgroundMovement();
     playerMovement();
     enemyMovement();
-    parallaxMovement();
     missleMovement();
+}
+
+function backgroundMovement(){
+    GamePlay.parallaxImgs
+    for(let i = 0; i < GamePlay.parallaxImgs.length; i++){
+        GamePlay.parallaxImgs[i].tilePosition.x -= GamePlay.parallaxImgs[i].moveBy;
+    }
 }
 
 function playerMovement() {
@@ -184,19 +190,6 @@ function missleMovement() {
             if (Application.missles[j] !== null && Application.missles[j] !== undefined && Application.enemies[k] !== null && Application.enemies[k] !== undefined) {
                 GamePlay.checkTargetHit(Application.missles[j], Application.enemies[k], app);
             }
-        }
-    }
-}
-
-function parallaxMovement() {
-    for (let i = 0; i < Application.stars.length; i++) {
-        let currentStar: Star = Application.stars[i];
-        currentStar.x -= 1;
-
-        if (currentStar.x < 0) {
-            currentStar.x *= -currentStar.speed;
-            currentStar.x += app.view.width;
-            currentStar.y = Application.randomNumber(1, 600);
         }
     }
 }

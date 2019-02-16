@@ -3,14 +3,12 @@
 import GamePlay from "./gamePlay";
 import Application from "./application";
 import HitTest from "./hitTest";
-import Star from "./star";
 
 export default class Movement{
 
     public static start(app: PIXI.Application){
         this.playerMovement();
         this.enemyMovement(app);
-        this.parallaxMovement(app);
         this.missleMovement(app);
     }
 
@@ -29,19 +27,6 @@ export default class Movement{
             if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
                 Application.enemies = Application.enemies.filter(e => e !== currentEnemy);
                 app.stage.removeChild(currentEnemy);
-            }
-        }
-    }
-
-    private static parallaxMovement(app: PIXI.Application) {
-        for (let i = 0; i < Application.stars.length; i++) {
-            let currentStar: Star = Application.stars[i];
-            currentStar.x -= 1;
-    
-            if (currentStar.x < 0) {
-                currentStar.x *= -currentStar.speed;
-                currentStar.x += app.view.width;
-                currentStar.y = Application.randomNumber(1, 600);
             }
         }
     }

@@ -1,9 +1,7 @@
-import Star from "./star";
 import Character from "./Character";
 
 export default class Application{
     public static state: string = '';
-    public static stars: Array<Star> = new Array(); 
     public static panel: PIXI.Sprite;
     public static panelButtons: PIXI.Sprite[] = new Array();
     public static shouldPause: boolean = true;
@@ -23,7 +21,7 @@ export default class Application{
     public static soundMuted: boolean = false;
     
     public static addSoundMuteBtn(){
-        
+
     }
     
     public static randomNumber(min, max): number{

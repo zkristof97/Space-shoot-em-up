@@ -1,29 +1,16 @@
-import Star from "./star";
 import Application from "./application";
 import Character from "./Character";
 import HitTest from "./hitTest";
 import Sounds from "./sound";
+import Parallax from "./parallax";
 
 export default class GamePlay {
-
-    private static backgroundMusic: HTMLAudioElement;
+    public static parallaxImgs: Array<Parallax>;
 
     public static spawnEnemy(app: PIXI.Application) {
         Application.intervalId = setInterval(() => {
             this.addEnemy(app);
         }, 2000);
-    }
-
-    public static playMusic(){
-        this.backgroundMusic = new Audio('resources/sounds/background-music.mp3');
-        this.backgroundMusic.volume = 0.2;
-        this.backgroundMusic.play();
-    }
-
-    public static stopMusic(){
-        if(this.backgroundMusic !== null && this.backgroundMusic !== undefined){
-            this.backgroundMusic.pause();
-        }
     }
 
     public static noEnemySpawn() {
@@ -45,23 +32,21 @@ export default class GamePlay {
     }
 
     public static drawStars(app: PIXI.Application) {
-        let bg = new PIXI.Sprite(PIXI.loader.resources['bg'].texture);
-        bg.width = app.view.width;
-        bg.height = app.view.height;
-        app.stage.addChild(bg);
-        /* for (var i = 0; i < 430; i++) {
-            let star;
-            if (i % 2 === 0) {
-                star = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 3);
+        this.parallaxImgs = new Array();
+        for (let i = 6; i >= 1; i--) {
+            let texture = PIXI.Texture.fromImage('bg' + i + '.png');
+            let bg = new Parallax(texture, app.view.width, app.view.height);
+            
+            if(i > 3){
+                bg.moveBy = 0.39;
+            }else {
+                bg.moveBy = 1.4; 
             }
-            else {
-                star = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 20);
-            }
-            star.position.set(Application.randomNumber(1, 800), Application.randomNumber(1, 600));
-            star.scale.set(0.01);
-            app.stage.addChild(star);
-            Application.stars.push(star);
-        } */
+
+            bg.tilePosition.set(0);
+            app.stage.addChild(bg);
+            this.parallaxImgs.push(bg);
+        }
     }
 
     public static createPlayer(app: PIXI.Application) {
