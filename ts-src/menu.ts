@@ -11,19 +11,7 @@ export default class Menu {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
-    }
-
-    public static playMusic(){
-        this.backgroundMusic = new Audio('resources/sounds/menu_background.mp3');
-        this.backgroundMusic.play();
-
-        this.backgroundMusic.onended = () =>{
-            this.backgroundMusic.play();
-        }
-    }
-
-    public static stopMusic(){
-        this.backgroundMusic.pause();
+        Animation.alienSpawn(app);
     }
 
     private loadLogo(app: PIXI.Application): void {

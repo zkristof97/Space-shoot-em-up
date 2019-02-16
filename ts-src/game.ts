@@ -30,6 +30,7 @@ function startGame() {
     document.getElementById('display').appendChild(app.view);
 
     PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+        .add('bg', 'resources/images/parallax-space-backgound.png')
         .add('resources/images/moon-test.json')
         .add('explosion', 'resources/images/explosion.json')
         .add('logo', 'resources/images/logo-text.png')
@@ -44,6 +45,12 @@ function startGame() {
         .add('playBtn', 'resources/images/playBtn.png')
         .add('replayBtn', 'resources/images/replayBtn.png')
         .add('missles', 'resources/images/missles.json')
+        .add('menuSound', 'resources/sounds/menu_background.mp3')
+        .add('backgroundSound', 'resources/sounds/background-music.mp3')
+        .add('gameOverSound', 'resources/sounds/game_over.mp3')
+        .add('engineSound', 'resources/sounds/engine_sound.mp3')
+        .add('explosionSound', 'resources/sounds/explosion.mp3')
+        .add('missleSound', 'resources/sounds/missle_shoot.mp3')
         .load(splashReady);
 
     function splashReady() {
@@ -77,14 +84,15 @@ function gameLoop() {
         app.ticker.remove(movements);
         Application.state = 'play';
     } else if (Application.state === 'play') {
+        Animation.stopAlienSpawn();
         app.stage.removeChildren();
-        GamePlay.createPlayer(app);
         GamePlay.drawStars(app);
         addControl();
         GamePlay.addScoreLabel(app);
         app.ticker.add(movements);
         panel.addPauseBtn(app);
         GamePlay.spawnEnemy(app);
+        GamePlay.createPlayer(app);
         Application.state = '';
     } else if (Application.state === 'pause') {
         Application.shouldPause = false;

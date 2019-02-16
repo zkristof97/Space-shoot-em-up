@@ -38,14 +38,18 @@ export default class GamePlay {
 
     private static addEnemy(app: PIXI.Application) {
         let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
-        enemy.scale.set(0.15, 0.15);
+        enemy.scale.set(0.15);
         enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
         Application.enemies.push(enemy);
         app.stage.addChild(enemy);
     }
 
     public static drawStars(app: PIXI.Application) {
-        for (var i = 0; i < 430; i++) {
+        let bg = new PIXI.Sprite(PIXI.loader.resources['bg'].texture);
+        bg.width = app.view.width;
+        bg.height = app.view.height;
+        app.stage.addChild(bg);
+        /* for (var i = 0; i < 430; i++) {
             let star;
             if (i % 2 === 0) {
                 star = new Star(PIXI.loader.resources['resources/images/circle.png'].texture, 3);
@@ -57,7 +61,7 @@ export default class GamePlay {
             star.scale.set(0.01);
             app.stage.addChild(star);
             Application.stars.push(star);
-        }
+        } */
     }
 
     public static createPlayer(app: PIXI.Application) {
@@ -99,7 +103,7 @@ export default class GamePlay {
         }
     }
 
-    private static drawParticles(enemy: PIXI.Sprite, app: PIXI.Application) {
+    public static drawParticles(enemy: PIXI.Sprite, app: PIXI.Application) {
         let particles: Array<PIXI.Sprite> = new Array();
         let container = new PIXI.Container();
 

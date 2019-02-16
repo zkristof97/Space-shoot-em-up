@@ -9,27 +9,32 @@ export default class Sounds{
     private static engineSound: HTMLAudioElement;
 
     public static playEngineSound(){
-        this.engineSound = new Audio('resources/sounds/engine_sound.mp3');
-        this.engineSound.volume = 0.05;
-        this.engineSound.play();
+        if(Application.state !== 'pause'){
+            this.engineSound = new Audio(PIXI.loader.resources['engineSound'].url);
+            this.engineSound.volume = 0.05;
+            this.engineSound.play();
+        }
     }
 
     public static playMissleSound(){
-        this.missleSound = new Audio('resources/sounds/missle_shoot.mp3');
-        this.missleSound.volume = 0.2;
-        this.missleSound.play();
+        if(Application.state !== 'pause'){
+            this.missleSound = new Audio(PIXI.loader.resources['missleSound'].url);
+            this.missleSound.volume = 0.2;
+            this.missleSound.play();
+        }   
     }
 
     public static playExplosionSound(volumeLevel: number){
-        this.explosionSound = new Audio('resources/sounds/explosion.mp3');
+        this.explosionSound = new Audio(PIXI.loader.resources['explosionSound'].url);
         this.explosionSound.volume = volumeLevel;
         this.explosionSound.play();
     }
 
-    public static playSounds(){
+    public static async playSounds(){
         switch (Application.state) {
             case 'menu':
-                this.menuSound = new Audio('resources/sounds/menu_background.mp3');;
+                this.menuSound = new Audio(PIXI.loader.resources['menuSound'].url);
+                this.menuSound.volume = 0.5;
                 this.menuSound.play();
 
                 this.menuSound.onended = () =>{
@@ -37,7 +42,7 @@ export default class Sounds{
                 }
                 break;
             case 'play': 
-                this.backgroundSound = new Audio('resources/sounds/background-music.mp3');
+                this.backgroundSound = new Audio(PIXI.loader.resources['backgroundSound'].url);
                 this.backgroundSound.volume = 0.2;
                 this.backgroundSound.play();
 
@@ -46,7 +51,7 @@ export default class Sounds{
                 }
                 break;
             case 'gameOver':
-                this.gameOverSound = new Audio('resources/sounds/game_over.mp3');
+                this.gameOverSound = new Audio(PIXI.loader.resources['gameOverSound'].url);
                 this.gameOverSound.volume = 0.2;
                 this.gameOverSound.play();
                 break;
