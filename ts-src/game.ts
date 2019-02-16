@@ -6,6 +6,7 @@ import Panel from './panel';
 import GameOver from './gameOver';
 import GamePlay from './gamePlay';
 import HitTest from './hitTest';
+import Sounds from './sound';
 
 let appOptions: PIXI.ApplicationOptions = {
     width: 800,
@@ -64,10 +65,9 @@ function startGame() {
 }
 
 function gameLoop() {
+    Sounds.stopSounds();
+    Sounds.playSounds();
     if (Application.state === 'menu') {
-        /* let foo: HTMLAudioElement = new Audio('resources/sounds/background-music.mp3');
-        foo.volume = 0.2;
-        foo.play(); */
         menu.init(app);
         Application.state = '';
 
@@ -143,9 +143,8 @@ function movements() {
 function playerMovement() {
     Application.player.x += Application.player.velocityX;
     Application.player.y += Application.player.velocityY;
-    console.log('x: ', Application.player.x, 'y: ', Application.player.y);
     
-    GamePlay.checkPosition(5,4,app);
+    GamePlay.checkPosition(Application.speed, Application.offset, app);
 }
 
 function enemyMovement() {
@@ -243,7 +242,7 @@ function keyUpHandler(e: any): void {
 
 function keyDownHandler(e: any) {
     let speed = 5;
-    let offset = 4;
+    Sounds.playEngineSound();    
     switch (e.key) {
         case ' ':
             if (Application.canShoot === true) {

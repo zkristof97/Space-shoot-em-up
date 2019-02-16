@@ -1,5 +1,6 @@
 import Application from "./application";
 import Character from "./Character";
+import Sounds from "./sound";
 
 export default class Animation{
     public static moon(app: PIXI.Application): void {
@@ -11,7 +12,7 @@ export default class Animation{
 
         let animation = new PIXI.extras.AnimatedSprite(frames);
         animation.scale.set(0.9);
-        animation.animationSpeed = 10 / 60;
+        animation.animationSpeed = 7 / 60;
         animation.play();
         app.stage.addChild(animation);
     }
@@ -28,9 +29,7 @@ export default class Animation{
         missle.width = missle.width / 2;
         missle.animationSpeed = 16/60;
         missle.play();
-        /* let soundEffect:HTMLAudioElement = new Audio('resources/sounds/missle_launch.mp3');
-        soundEffect.volume = 0.2;
-        soundEffect.play(); */
+        Sounds.playMissleSound();
 
         app.stage.addChild(missle);
 
@@ -39,7 +38,8 @@ export default class Animation{
 
     public static explode(player: Character, enemy: PIXI.Sprite, app:PIXI.Application) {
         let frames: PIXI.Texture[] = new Array();
-    
+        
+        Sounds.playExplosionSound(0.5);
         Application.doExplosion = false;
     
         app.stage.removeChild(player);

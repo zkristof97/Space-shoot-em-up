@@ -3,6 +3,7 @@ import Animation from './animation';
 
 export default class Menu {
 
+    public static backgroundMusic: HTMLAudioElement;
     public buttons: Array<PIXI.Sprite>;
 
     public init(app: PIXI.Application): void {
@@ -10,6 +11,19 @@ export default class Menu {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
+    }
+
+    public static playMusic(){
+        this.backgroundMusic = new Audio('resources/sounds/menu_background.mp3');
+        this.backgroundMusic.play();
+
+        this.backgroundMusic.onended = () =>{
+            this.backgroundMusic.play();
+        }
+    }
+
+    public static stopMusic(){
+        this.backgroundMusic.pause();
     }
 
     private loadLogo(app: PIXI.Application): void {

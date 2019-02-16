@@ -1,6 +1,9 @@
 import Application from "./application";
 
 export default class GameOver{
+
+    public static backgroundMusic: HTMLAudioElement;
+
     public static display(app: PIXI.Application) {
         let gameOver = new PIXI.Sprite(PIXI.loader.resources['game-over'].texture);
         gameOver.anchor.set(0.5);
@@ -25,5 +28,17 @@ export default class GameOver{
         text.position.set(button.x, button.y);
     
         app.stage.addChild(button, text);
+    }
+
+    public static playMusic(){
+        this.backgroundMusic = new Audio('resources/sounds/game_over.mp3');
+        this.backgroundMusic.volume = 0.2;
+        this.backgroundMusic.play();
+    }
+
+    public static stopMusic(){
+        if(this.backgroundMusic !== null && this.backgroundMusic !== undefined){
+            this.backgroundMusic.pause();
+        }
     }
 }

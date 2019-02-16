@@ -18,6 +18,8 @@ export default class Application{
     public static isReplay: boolean = false;
     public static player: Character;
     public static canShoot: boolean = true;
+    public static speed: number = 5;
+    public static offset: number = 4;
     
     public static randomNumber(min, max): number{
         return Math.floor(Math.random() * (max - min + 1)) + min;

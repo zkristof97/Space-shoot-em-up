@@ -2,14 +2,28 @@ import Star from "./star";
 import Application from "./application";
 import Character from "./Character";
 import HitTest from "./hitTest";
+import Sounds from "./sound";
 
 export default class GamePlay {
 
+    private static backgroundMusic: HTMLAudioElement;
 
     public static spawnEnemy(app: PIXI.Application) {
         Application.intervalId = setInterval(() => {
             this.addEnemy(app);
         }, 2000);
+    }
+
+    public static playMusic(){
+        this.backgroundMusic = new Audio('resources/sounds/background-music.mp3');
+        this.backgroundMusic.volume = 0.2;
+        this.backgroundMusic.play();
+    }
+
+    public static stopMusic(){
+        if(this.backgroundMusic !== null && this.backgroundMusic !== undefined){
+            this.backgroundMusic.pause();
+        }
     }
 
     public static noEnemySpawn() {
@@ -25,7 +39,7 @@ export default class GamePlay {
     private static addEnemy(app: PIXI.Application) {
         let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
         enemy.scale.set(0.15, 0.15);
-        enemy.position.set(app.view.width, Application.randomNumber(enemy.height, 600 - enemy.height));
+        enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
         Application.enemies.push(enemy);
         app.stage.addChild(enemy);
     }
@@ -71,6 +85,8 @@ export default class GamePlay {
 
     public static checkTargetHit(missle: PIXI.Sprite, enemy: PIXI.Sprite, app: PIXI.Application) {
         if (HitTest.isCollide(missle.getBounds(), enemy.getBounds()) === true) {
+            Sounds.playExplosionSound(0.05);
+
             Application.missles = Application.missles.filter(m => m !== missle);
             app.stage.removeChild(missle);
 
