@@ -1,10 +1,9 @@
 {
   "name": "javascript-game",
   "version": "1.0.0",
-  "description": "",
+  "description": "Space shoot'em up game that I have created as part of the recruitment process.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack"
   },
   "author": "Zentai Kristóf",
@@ -18,7 +17,7 @@
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
-    "@types/jquery": "^3.3.29",
-    "@types/pixi.js": "^4.8.6"
+    "@types/pixi.js": "^4.8.6",
+    "pixi.js": "^4.8.6"
   }
 }

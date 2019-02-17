@@ -11,13 +11,12 @@ export default class Menu {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
-        Animation.alienSpawn(app);
     }
 
     private loadLogo(app: PIXI.Application): void {
-        let logo = new PIXI.Sprite(PIXI.loader.resources['logo'].texture);
-        logo.position.set(app.view.width - 225, app.view.height / 2 - 125);
-        logo.scale.set(0.5);
+        let logo = new PIXI.Sprite(PIXI.loader.resources['logo-new'].texture);
+        logo.position.set(445,110);
+        logo.scale.set(0.45);
         app.stage.addChild(logo);
     }
 
@@ -27,7 +26,7 @@ export default class Menu {
             let button: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['button'].texture);
             button.anchor.set(0.5);
             button.scale.set(0.5);
-            button.position.set(app.view.width - button.width + 50, app.view.height / 2 + (i * 60))
+            button.position.set(app.view.width - button.width * 1.18, app.view.height / 2  + (i * 60))
             this.buttons.push(button);
             button.interactive = true;
             app.stage.addChild(button);
@@ -62,7 +61,10 @@ export default class Menu {
     }
 
     private loadBackground(app: PIXI.Application): void {
-        let background = new PIXI.Sprite(PIXI.loader.resources['starBg'].texture);
+        /* let background = new PIXI.Sprite(PIXI.loader.resources['starBg'].texture); */
+        let background = new PIXI.Sprite(PIXI.loader.resources['cosmos'].texture);
+        background.width = 800;
+        background.height = 600;
         app.stage.addChild(background);
         Animation.moon(app);
     }

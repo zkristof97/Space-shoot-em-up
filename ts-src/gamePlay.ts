@@ -36,11 +36,26 @@ export default class GamePlay {
         for (let i = 6; i >= 1; i--) {
             let texture = PIXI.Texture.fromImage('bg' + i + '.png');
             let bg = new Parallax(texture, app.view.width, app.view.height);
-            
-            if(i > 3){
-                bg.velocity = 0.39;
-            }else {
-                bg.velocity = 1.4; 
+
+            switch (i) {
+                case 1:
+                    bg.velocity = 1.7;
+                    break;
+                case 2:
+                    bg.velocity = 1.16;
+                    break;
+                case 3:
+                    bg.velocity = 0.7;
+                    break;
+                case 4:
+                    bg.velocity = 0.53;
+                    break;
+                case 5:
+                    bg.velocity = 0.29;
+                    break;
+                case 6:
+                    bg.velocity = 0.2;
+                    break;
             }
 
             bg.tilePosition.set(0);
@@ -60,8 +75,8 @@ export default class GamePlay {
     public static checkPosition(speed: number, offset: number, app: PIXI.Application) {
         if (Application.player.x - speed * offset <= 0) {
             Application.player.x = speed * offset;
-        } 
-        if (Application.player.y  <=  speed * offset) {
+        }
+        if (Application.player.y <= speed * offset) {
             Application.player.y = speed * offset;
         }
         if (Application.player.x + Application.player.width + speed * offset >= app.view.width) {
@@ -109,19 +124,19 @@ export default class GamePlay {
         container.addChild(mask);
         container.mask = mask;
 
-        app.ticker.add(function particlesFade(){
+        app.ticker.add(function particlesFade() {
             for (let j = 0; j < particles.length; j++) {
-                if(Application.randomNumber(0,1) === 0){
+                if (Application.randomNumber(0, 1) === 0) {
                     particles[j].x--;
-                }else{
+                } else {
                     particles[j].y++;
                 }
-                if(particles[j].x < 0 || particles[j].y > container.mask.height){
+                if (particles[j].x < 0 || particles[j].y > container.mask.height) {
                     container.removeChild(particles[j]);
                     particles = particles.filter(p => p !== particles[j]);
                 }
             }
-            if(particles.length === 0){
+            if (particles.length === 0) {
                 app.ticker.remove(particlesFade);
                 app.stage.removeChild(container);
             }

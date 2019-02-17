@@ -19,11 +19,6 @@ export default class Application{
     public static speed: number = 5;
     public static offset: number = 4;
     public static movementOn: boolean = false;
-    public static soundMuted: boolean = false;
-    
-    public static addSoundMuteBtn(){
-
-    }
     
     public static randomNumber(min, max): number{
         return Math.floor(Math.random() * (max - min + 1)) + min;

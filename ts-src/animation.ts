@@ -1,11 +1,8 @@
 import Application from "./application";
 import Character from "./Character";
 import Sounds from "./sound";
-import GamePlay from "./gamePlay";
 
 export default class Animation {
-    public static intervalId: number;
-
     public static moon(app: PIXI.Application): void {
         let frames: PIXI.Texture[] = new Array();
         for (let i = 1; i <= 48; i++) {
@@ -14,7 +11,8 @@ export default class Animation {
         }
 
         let animation = new PIXI.extras.AnimatedSprite(frames);
-        animation.scale.set(0.9);
+        animation.position.set(0, 30);
+        animation.scale.set(0.8);
         animation.animationSpeed = 7 / 60;
         animation.play();
         app.stage.addChild(animation);
@@ -39,23 +37,6 @@ export default class Animation {
 
             Application.missles.push(missle);
         }
-    }
-
-    public static stopAlienSpawn() {
-        clearInterval(this.intervalId);
-    }
-
-    public static alienSpawn(app: PIXI.Application) {
-        this.intervalId = setInterval(() => {
-            let alien = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
-            alien.scale.set(0.15);
-            alien.position.set(Application.randomNumber(100, 400), Application.randomNumber(400, app.view.height - alien.height));
-            app.stage.addChild(alien);
-            setTimeout(() => {
-                app.stage.removeChild(alien);
-                GamePlay.drawParticles(alien, app)
-            }, 450);
-        }, 2300);
     }
 
     public static explode(player: Character, enemy: PIXI.Sprite, app: PIXI.Application) {
