@@ -14,7 +14,8 @@ export default class Animation {
         }
 
         let animation = new PIXI.extras.AnimatedSprite(frames);
-        animation.scale.set(0.9);
+        animation.position.set(0, 30);
+        animation.scale.set(0.8);
         animation.animationSpeed = 7 / 60;
         animation.play();
         app.stage.addChild(animation);
@@ -46,7 +47,7 @@ export default class Animation {
     }
 
     public static alienSpawn(app: PIXI.Application) {
-        this.intervalId = setInterval(() => {
+        /* this.intervalId = setInterval(() => {
             let alien = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
             alien.scale.set(0.15);
             alien.position.set(Application.randomNumber(100, 400), Application.randomNumber(400, app.view.height - alien.height));
@@ -55,7 +56,7 @@ export default class Animation {
                 app.stage.removeChild(alien);
                 GamePlay.drawParticles(alien, app)
             }, 450);
-        }, 2300);
+        }, 2300); */
     }
 
     public static explode(player: Character, enemy: PIXI.Sprite, app: PIXI.Application) {

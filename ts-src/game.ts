@@ -28,7 +28,7 @@ function startGame() {
 
     document.getElementById('display').appendChild(app.view);
 
-    PIXI.loader.add('splash-screen', 'resources/images/splash-screen.png')
+    PIXI.loader.add('splash-screen', 'resources/images/splash-screen4.png')
         .add('background', 'resources/images/parallaxImgs.json')
         .add('resources/images/moon.json')
         .add('explosion', 'resources/images/explosion.json')
@@ -50,6 +50,10 @@ function startGame() {
         .add('engineSound', 'resources/sounds/engine_sound.mp3')
         .add('explosionSound', 'resources/sounds/explosion.mp3')
         .add('missleSound', 'resources/sounds/missle_shoot.mp3')
+        .add('soundOn', 'resources/images/sound_on.png')
+        .add('soundOff', 'resources/images/sound_off.png')
+        .add('cosmos', 'resources/images/cosmos-bg.png')
+        .add('logo-new', 'resources/images/logo.png')
         .load(splashReady);
 
     function splashReady() {
@@ -64,7 +68,6 @@ function startGame() {
                     app.ticker.remove(fadeOut);
                     Application.state = 'menu';
                     app.ticker.add(gameLoop);
-                    /* app.ticker.add(movements); */
                 }
             });
         }, 2000);
@@ -72,8 +75,11 @@ function startGame() {
 }
 
 function gameLoop() {
-    Sounds.stopSounds();
-    Sounds.playSounds();
+    /* Application.addSoundMuteBtn(app); */
+    if(Application.soundOn === true){
+        Sounds.stopSounds();
+        Sounds.playSounds();
+    }
     movements();
     if (Application.state === 'menu') {
         menu.init(app);
@@ -82,7 +88,6 @@ function gameLoop() {
         Application.score = 0;
         GamePlay.noEnemySpawn();
         Application.movementOn = false;
-        /* app.ticker.remove(movements); */
         Application.state = 'play';
     } else if (Application.state === 'play') {
         Application.movementOn = true;
@@ -92,7 +97,6 @@ function gameLoop() {
         addControl();
         GamePlay.addScoreLabel(app);
         Application.movementOn = true;
-        /* app.ticker.add(movements); */
         panel.addPauseBtn(app);
         GamePlay.spawnEnemy(app);
         GamePlay.createPlayer(app);
@@ -102,10 +106,8 @@ function gameLoop() {
         panel.showPanel(true, app);
         GamePlay.noEnemySpawn();
         Application.movementOn = false;
-        /* app.ticker.remove(movements); */
         Application.state = '';
     } else if (Application.state === 'unpause') {
-        /* app.ticker.add(movements); */
         Application.movementOn = true;
         panel.showPanel(false, app);
         GamePlay.spawnEnemy(app);
@@ -115,7 +117,6 @@ function gameLoop() {
         Application.shouldPause = true;
         panel.showPanel(false, app);
         Application.movementOn = false;
-        /* app.ticker.remove(movements); */
         GamePlay.noEnemySpawn();
         Application.missles = new Array();
         Application.enemies = new Array();
@@ -132,7 +133,6 @@ function gameLoop() {
     } else if (Application.state === 'gameOver') {
         removeControl();
         Application.movementOn = false;
-        /* app.ticker.remove(movements); */
         Application.isGameOver = true;
         panel.deactivatePauseBtn();
         GameOver.display(app);
