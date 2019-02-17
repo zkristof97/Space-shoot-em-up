@@ -39,22 +39,22 @@ export default class GamePlay {
 
             switch (i) {
                 case 1:
-                bg.velocity = 1.7;
+                    bg.velocity = 1.7;
                     break;
                 case 2:
-                bg.velocity = 1.16;
+                    bg.velocity = 1.16;
                     break;
                 case 3:
-                bg.velocity = 0.7;
+                    bg.velocity = 0.7;
                     break;
                 case 4:
-                bg.velocity = 0.53;
+                    bg.velocity = 0.53;
                     break;
                 case 5:
-                bg.velocity = 0.29;
+                    bg.velocity = 0.29;
                     break;
                 case 6:
-                bg.velocity = 0.2;
+                    bg.velocity = 0.2;
                     break;
             }
 

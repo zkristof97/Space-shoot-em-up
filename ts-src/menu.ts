@@ -11,7 +11,6 @@ export default class Menu {
         this.loadBackground(app);
         this.loadLogo(app);
         this.loadButtons(app);
-        Animation.alienSpawn(app);
     }
 
     private loadLogo(app: PIXI.Application): void {
