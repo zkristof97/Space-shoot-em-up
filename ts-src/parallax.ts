@@ -4,5 +4,5 @@ export default class Parallax extends PIXI.extras.TilingSprite{
         
     }
 
-    public moveBy: number = 0;
+    public velocity: number = 0;
 }

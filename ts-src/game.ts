@@ -64,6 +64,7 @@ function startGame() {
                     app.ticker.remove(fadeOut);
                     Application.state = 'menu';
                     app.ticker.add(gameLoop);
+                    /* app.ticker.add(movements); */
                 }
             });
         }, 2000);
@@ -73,13 +74,15 @@ function startGame() {
 function gameLoop() {
     Sounds.stopSounds();
     Sounds.playSounds();
+    movements();
     if (Application.state === 'menu') {
         menu.init(app);
         Application.state = '';
     } if (Application.state === 'replay') {
         Application.score = 0;
         GamePlay.noEnemySpawn();
-        app.ticker.remove(movements);
+        Application.movementOn = false;
+        /* app.ticker.remove(movements); */
         Application.state = 'play';
     } else if (Application.state === 'play') {
         Application.movementOn = true;
@@ -88,7 +91,8 @@ function gameLoop() {
         GamePlay.initBackground(app);
         addControl();
         GamePlay.addScoreLabel(app);
-        app.ticker.add(movements);
+        Application.movementOn = true;
+        /* app.ticker.add(movements); */
         panel.addPauseBtn(app);
         GamePlay.spawnEnemy(app);
         GamePlay.createPlayer(app);
@@ -97,10 +101,12 @@ function gameLoop() {
         Application.shouldPause = false;
         panel.showPanel(true, app);
         GamePlay.noEnemySpawn();
-        app.ticker.remove(movements);
+        Application.movementOn = false;
+        /* app.ticker.remove(movements); */
         Application.state = '';
     } else if (Application.state === 'unpause') {
-        app.ticker.add(movements);
+        /* app.ticker.add(movements); */
+        Application.movementOn = true;
         panel.showPanel(false, app);
         GamePlay.spawnEnemy(app);
         Application.state = '';
@@ -108,7 +114,8 @@ function gameLoop() {
         Application.score = 0;
         Application.shouldPause = true;
         panel.showPanel(false, app);
-        app.ticker.remove(movements);
+        Application.movementOn = false;
+        /* app.ticker.remove(movements); */
         GamePlay.noEnemySpawn();
         Application.missles = new Array();
         Application.enemies = new Array();
@@ -124,7 +131,8 @@ function gameLoop() {
         }
     } else if (Application.state === 'gameOver') {
         removeControl();
-        app.ticker.remove(movements);
+        Application.movementOn = false;
+        /* app.ticker.remove(movements); */
         Application.isGameOver = true;
         panel.deactivatePauseBtn();
         GameOver.display(app);
@@ -155,9 +163,8 @@ function movements() {
 }
 
 function backgroundMovement(){
-    GamePlay.parallaxImgs
     for(let i = 0; i < GamePlay.parallaxImgs.length; i++){
-        GamePlay.parallaxImgs[i].tilePosition.x -= GamePlay.parallaxImgs[i].moveBy;
+        GamePlay.parallaxImgs[i].tilePosition.x -= GamePlay.parallaxImgs[i].velocity;
     }
 }
 

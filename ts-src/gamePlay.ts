@@ -38,9 +38,9 @@ export default class GamePlay {
             let bg = new Parallax(texture, app.view.width, app.view.height);
             
             if(i > 3){
-                bg.moveBy = 0.39;
+                bg.velocity = 0.39;
             }else {
-                bg.moveBy = 1.4; 
+                bg.velocity = 1.4; 
             }
 
             bg.tilePosition.set(0);
