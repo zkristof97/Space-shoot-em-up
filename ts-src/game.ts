@@ -76,16 +76,16 @@ function gameLoop() {
     if (Application.state === 'menu') {
         menu.init(app);
         Application.state = '';
-
     } if (Application.state === 'replay') {
         Application.score = 0;
         GamePlay.noEnemySpawn();
         app.ticker.remove(movements);
         Application.state = 'play';
     } else if (Application.state === 'play') {
+        Application.movementOn = true;
         Animation.stopAlienSpawn();
         app.stage.removeChildren();
-        GamePlay.drawStars(app);
+        GamePlay.initBackground(app);
         addControl();
         GamePlay.addScoreLabel(app);
         app.ticker.add(movements);
@@ -123,8 +123,8 @@ function gameLoop() {
             Application.state = '';
         }
     } else if (Application.state === 'gameOver') {
+        removeControl();
         app.ticker.remove(movements);
-        window.removeEventListener('keydown', keyDownHandler);
         Application.isGameOver = true;
         panel.deactivatePauseBtn();
         GameOver.display(app);
@@ -140,11 +140,18 @@ function addControl() {
     window.addEventListener('keyup', keyUpHandler);
 }
 
+function removeControl(){
+    window.removeEventListener('keydown', keyDownHandler);
+    window.removeEventListener('keyup', keyUpHandler);
+}
+
 function movements() {
-    backgroundMovement();
-    playerMovement();
-    enemyMovement();
-    missleMovement();
+    if(Application.movementOn === true){
+        backgroundMovement();
+        playerMovement();
+        enemyMovement();
+        missleMovement();
+    }
 }
 
 function backgroundMovement(){

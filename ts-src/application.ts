@@ -18,6 +18,7 @@ export default class Application{
     public static canShoot: boolean = true;
     public static speed: number = 5;
     public static offset: number = 4;
+    public static movementOn: boolean = true;
     public static soundMuted: boolean = false;
     
     public static addSoundMuteBtn(){

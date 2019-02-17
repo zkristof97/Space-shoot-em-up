@@ -31,7 +31,7 @@ export default class GamePlay {
         app.stage.addChild(enemy);
     }
 
-    public static drawStars(app: PIXI.Application) {
+    public static initBackground(app: PIXI.Application) {
         this.parallaxImgs = new Array();
         for (let i = 6; i >= 1; i--) {
             let texture = PIXI.Texture.fromImage('bg' + i + '.png');

@@ -34,7 +34,7 @@ export default class Sounds{
         switch (Application.state) {
             case 'menu':
                 this.menuSound = new Audio(PIXI.loader.resources['menuSound'].url);
-                this.menuSound.volume = 0.5;
+                this.menuSound.volume = 0.1;
                 this.menuSound.play();
 
                 this.menuSound.onended = () =>{
@@ -43,7 +43,7 @@ export default class Sounds{
                 break;
             case 'play': 
                 this.backgroundSound = new Audio(PIXI.loader.resources['backgroundSound'].url);
-                this.backgroundSound.volume = 0.2;
+                this.backgroundSound.volume = 0.05;
                 this.backgroundSound.play();
 
                 this.backgroundSound.onended = () =>{
@@ -52,7 +52,7 @@ export default class Sounds{
                 break;
             case 'gameOver':
                 this.gameOverSound = new Audio(PIXI.loader.resources['gameOverSound'].url);
-                this.gameOverSound.volume = 0.2;
+                this.gameOverSound.volume = 0.05;
                 this.gameOverSound.play();
                 break;
         }
