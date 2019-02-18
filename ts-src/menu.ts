@@ -6,6 +6,7 @@ export default class Menu {
 
     public static buttons: Array<PIXI.Sprite>;
 
+    //creates the menu
     public static init(app: PIXI.Application): void {
         app.stage.removeChildren();
 
@@ -16,8 +17,9 @@ export default class Menu {
         Animation.moon(app);
     }
 
+    //creates the logo that is displayed above the buttons
     private static loadLogo(app: PIXI.Application): void {
-        let logo = new PIXI.Sprite(PIXI.loader.resources['logo-new'].texture);
+        let logo: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['logo.png']);
 
         logo.position.set(410, 110);
 
@@ -26,11 +28,12 @@ export default class Menu {
         app.stage.addChild(logo);
     }
 
+    //creates buttons
     private static loadButtons(app: PIXI.Application): void {
         this.buttons = new Array();
 
         for (let i = 0; i < 4; i++) {
-            let button: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['button'].texture);
+            let button: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['button.png']);
 
             button.anchor.set(0.5);
             button.scale.set(0.5);
@@ -61,6 +64,7 @@ export default class Menu {
         this.addBtnText(app);
     }
 
+    //adds label onto the buttons 
     private static addBtnText(app: PIXI.Application): void {
         let text: PIXI.Text;
 
@@ -84,8 +88,9 @@ export default class Menu {
         }
     }
 
+    //loads the background and resizes it to the desired dimensions
     private static loadBackground(app: PIXI.Application): void {
-        let background = new PIXI.Sprite(PIXI.loader.resources['cosmos'].texture);
+        let background: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['cosmos-bg.png']);
 
         background.width = 800;
         background.height = 600;

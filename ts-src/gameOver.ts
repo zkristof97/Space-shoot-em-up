@@ -3,8 +3,9 @@ import Application from "./application";
 
 export default class GameOver {
 
-    public static display(app: PIXI.Application) {
-        let gameOver = new PIXI.Sprite(PIXI.loader.resources['game-over'].texture);
+    //displays the game over sign
+    public static display(app: PIXI.Application): void {
+        let gameOver: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['game-over.png']);
 
         gameOver.position.set(app.view.width / 2, app.view.height / 2);
 
@@ -15,8 +16,9 @@ export default class GameOver {
         this.addBackToMenuBtn(gameOver, app);
     }
 
-    private static addBackToMenuBtn(gameOverSign: PIXI.Sprite, app: PIXI.Application) {
-        let button = new PIXI.Sprite(PIXI.loader.resources['button'].texture);
+    //adds a button below the game over sign that lets us go back to the menu
+    private static addBackToMenuBtn(gameOverSign: PIXI.Sprite, app: PIXI.Application): void {
+        let button: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['button.png']);
 
         button.position.set(app.view.width / 2, app.view.height / 2 + gameOverSign.height / 2 + 50);
 
@@ -30,7 +32,7 @@ export default class GameOver {
             Application.state = 'menu';
         });
 
-        let text = new PIXI.Text('Back');
+        let text: PIXI.Text = new PIXI.Text('Back');
 
         text.position.set(button.x, button.y);
         

@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
-import Character from "./Character";
+import Player from "./Character";
 import Animation from "./animation";
 
 export default class HitTest{
 
+    //checks if player and enemy have collided
     private static isCollision(player: any, enemy: any): boolean {
 
         let hit: boolean, combinedHalfWidths: number, combinedHalfHeights: number, vx: number, vy: number;
@@ -40,11 +41,13 @@ export default class HitTest{
         return hit;
     };
 
+    //checks if missle and enemy have collided
     public static isCollide(missle: PIXI.Rectangle, enemy: PIXI.Rectangle): boolean {
-        return missle.x + missle.width / 2 >= enemy.x && missle.x <= enemy.x + enemy.width && missle.y + missle.height >= enemy.y && missle.y <= enemy.y + enemy.height;
+        return missle.x + missle.width / 6 >= enemy.x && missle.x <= enemy.x + enemy.width && missle.y + missle.height >= enemy.y && missle.y <= enemy.y + enemy.height;
     }
 
-    public static detectCollision(player: Character, enemy: PIXI.Sprite, app:PIXI.Application): void {
+    //if collision occured between player and enemy, these measures occur
+    public static detectCollision(player: Player, enemy: PIXI.Sprite, app:PIXI.Application): void {
         if (this.isCollision(player.getBounds(), enemy.getBounds())) {
 
             app.stage.removeChild(player);

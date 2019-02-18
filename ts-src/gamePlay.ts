@@ -1,17 +1,21 @@
 import * as PIXI from 'pixi.js';
 import Application from "./application";
-import Character from "./Character";
+import Player from "./Character";
 import HitTest from "./hitTest";
 import Sounds from "./sound";
 import Parallax from "./parallax";
 import Panel from "./panel";
+import Movement from './movement';
 
 export default class GamePlay {
     public static parallaxImgs: Array<Parallax>;
 
-    public static initPlay(app: PIXI.Application){
+    //calls the functions that are necessary for the game to be playable
+    public static initPlay(app: PIXI.Application): void{
         app.stage.removeChildren();
 
+        //initializing new arrays so that when we restart the game, 
+        //we don't have missles or enemies left over from the previous game
         Application.missles = new Array();
         Application.enemies = new Array();
         
@@ -23,17 +27,30 @@ export default class GamePlay {
         Panel.addPauseBtn(app);
     }
 
-    public static spawnEnemy(app: PIXI.Application) {
+    //when called spawns enemies
+    public static spawnEnemy(app: PIXI.Application): void {
         Application.intervalId = setInterval(() => {
-            this.addEnemy(app);
+            if(document.hasFocus() === true){
+                let enemy: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
+    
+                enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
+    
+                enemy.scale.set(0.15);
+                
+                Application.enemies.push(enemy);
+    
+                app.stage.addChild(enemy);
+            }
         }, 2000);
     }
 
-    public static noEnemySpawn() {
+    //stops enemy spawning
+    public static noEnemySpawn(): void {
         clearInterval(Application.intervalId);
     }
 
-    private static addScoreLabel(app: PIXI.Application) {
+    //adds the score label to the game screen that tracks how many aliens we have killed so far
+    private static addScoreLabel(app: PIXI.Application): void {
         Application.score = 0;
 
         Application.message = new PIXI.Text('Score: ' + Application.score, { fill: 0xFFFFFF });
@@ -43,27 +60,14 @@ export default class GamePlay {
         app.stage.addChild(Application.message);
     }
 
-    private static addEnemy(app: PIXI.Application) {
-        if(document.hasFocus() === true){
-            let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
-
-            enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
-
-            enemy.scale.set(0.15);
-            
-            Application.enemies.push(enemy);
-
-            app.stage.addChild(enemy);
-        }
-    }
-
-    private static initBackground(app: PIXI.Application) {
+    //creates the parallax scrolling background from 6 layers
+    private static initBackground(app: PIXI.Application): void {
         this.parallaxImgs = new Array();
 
         for (let i = 6; i >= 1; i--) {
-            let texture = PIXI.Texture.fromImage('bg' + i + '.png');
+            let texture: PIXI.Texture = PIXI.Texture.fromImage('bg' + i + '.png');
 
-            let bg = new Parallax(texture, app.view.width, app.view.height);
+            let bg: Parallax = new Parallax(texture, app.view.width, app.view.height);
 
             switch (i) {
                 case 1:
@@ -94,18 +98,17 @@ export default class GamePlay {
         }
     }
 
-    private static createPlayer(app: PIXI.Application) {
-        Application.player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
+    //creates our player object
+    private static createPlayer(app: PIXI.Application): void {
+        Application.player = new Player(PIXI.loader.resources['images'].textures['craft.png']);
 
         Application.player.position.set(75, app.view.height / 2);
-
-        Application.player.velocityX = 0;
-        Application.player.velocityY = 0;
 
         app.stage.addChild(Application.player);
     }
 
-    public static checkPosition(speed: number, offset: number, app: PIXI.Application) {
+    //checks to see if player has gone out of bounds, if yes puts it back in position
+    public static checkPosition(speed: number, offset: number, app: PIXI.Application): void {
         if (Application.player.x - speed * offset <= 0) {
             
             Application.player.x = speed * offset;
@@ -128,10 +131,15 @@ export default class GamePlay {
         }
     }
 
-    public static checkTargetHit(missle: PIXI.Sprite, enemy: PIXI.Sprite, app: PIXI.Application) {
+    //checks if a missle has hit an enemy
+    public static checkTargetHit(missle: PIXI.Sprite, enemy: PIXI.Sprite, app: PIXI.Application): void {
         if (HitTest.isCollide(missle.getBounds(), enemy.getBounds()) === true) {
+            //setting it to true because of speed up
+            Movement.doIncreaseSpeed = true;
+
             Sounds.playExplosionSound(0.05);
 
+            //removing missle and enemy that collided
             app.stage.removeChild(missle);
             Application.missles = Application.missles.filter(m => m !== missle);
             
@@ -140,22 +148,26 @@ export default class GamePlay {
 
             Application.score++;
             Application.message.text = 'Score: ' + Application.score;
+
             this.drawParticles(enemy, app)
         }
     }
 
-    private static drawParticles(enemy: PIXI.Sprite, app: PIXI.Application) {
+    //drawing particles that appear if a missle has successfully destroyed an alien
+    private static drawParticles(enemy: PIXI.Sprite, app: PIXI.Application): void {
         let particles: Array<PIXI.Sprite> = new Array();
 
-        let container = new PIXI.Container();
+        //container that holds our particles
+        let container: PIXI.Container = new PIXI.Container();
 
         container.position.set(enemy.x, enemy.y);
 
         app.stage.addChild(container);
 
+        //creating particles
         for (let i = 0; i < enemy.height; i += 5) {
             for (let j = 0; j < enemy.width; j += 5) {
-                let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
+                let particle: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['circle.png']);
 
                 particle.position.set(j, i);
 
@@ -169,13 +181,15 @@ export default class GamePlay {
             }
         }
 
-        let mask = new PIXI.Graphics().beginFill(0xFFFFF).drawCircle(container.width / 2, container.height / 2, 35).endFill();
+        //masking the container so that particles will form a circular shape
+        let mask: PIXI.Graphics = new PIXI.Graphics().beginFill(0xFFFFF).drawCircle(container.width / 2, container.height / 2, 35).endFill();
 
         container.addChild(mask);
 
         container.mask = mask;
 
         app.ticker.add(function particlesFade() {
+            //moving particles
             for (let j = 0; j < particles.length; j++) {
                 if (Application.randomNumber(0, 1) === 0) {
 
@@ -202,5 +216,4 @@ export default class GamePlay {
             }
         });
     }
-
 }
