@@ -42,9 +42,10 @@ export default class HitTest{
 
     public static detectCollision(player: Character, enemy: PIXI.Sprite, app:PIXI.Application): void {
         if (this.isCollision(player.getBounds(), enemy.getBounds())) {
-            if (Application.doExplosion === true) {
-                Animation.explode(player, enemy, app);
-            }
+            app.stage.removeChild(player);
+            app.stage.removeChild(enemy);
+
+            Animation.explode(player, app);
         }
     }
 }

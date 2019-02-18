@@ -6,7 +6,7 @@ export default class Panel {
         Application.pauseBtn.interactive = false;
     }
 
-    public addPauseBtn(app: PIXI.Application): void {
+    public static addPauseBtn(app: PIXI.Application): void {
         let pauseBtn = new PIXI.Sprite(PIXI.loader.resources['pauseBtn'].texture);
         pauseBtn.anchor.set(1, 1);
         pauseBtn.scale.set(0.08);

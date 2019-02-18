@@ -3,9 +3,21 @@ import Character from "./Character";
 import HitTest from "./hitTest";
 import Sounds from "./sound";
 import Parallax from "./parallax";
+import Panel from "./panel";
 
 export default class GamePlay {
     public static parallaxImgs: Array<Parallax>;
+
+    public static initPlay(app: PIXI.Application){
+        Application.missles = new Array();
+        Application.enemies = new Array();
+        app.stage.removeChildren();
+        this.initBackground(app);
+        this.addScoreLabel(app);
+        this.spawnEnemy(app);
+        this.createPlayer(app);
+        Panel.addPauseBtn(app);
+    }
 
     public static spawnEnemy(app: PIXI.Application) {
         Application.intervalId = setInterval(() => {
@@ -18,17 +30,20 @@ export default class GamePlay {
     }
 
     public static addScoreLabel(app: PIXI.Application) {
-        Application.message = new PIXI.Text('Score: 0', { fill: 0xFFFFFF });
+        Application.score = 0;
+        Application.message = new PIXI.Text('Score: ' + Application.score, { fill: 0xFFFFFF });
         Application.message.position.set(10, 10);
         app.stage.addChild(Application.message);
     }
 
     private static addEnemy(app: PIXI.Application) {
-        let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
-        enemy.scale.set(0.15);
-        enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
-        Application.enemies.push(enemy);
-        app.stage.addChild(enemy);
+        if(document.hasFocus() === true){
+            let enemy = new PIXI.Sprite(PIXI.loader.resources['images'].textures['alien.png']);
+            enemy.scale.set(0.15);
+            enemy.position.set(app.view.width, Application.randomNumber(enemy.height, app.view.height - enemy.height));
+            Application.enemies.push(enemy);
+            app.stage.addChild(enemy);
+        }
     }
 
     public static initBackground(app: PIXI.Application) {

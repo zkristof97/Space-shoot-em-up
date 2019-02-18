@@ -6,15 +6,6 @@ export default class Sounds{
     private static missleSound: HTMLAudioElement;
     private static explosionSound: HTMLAudioElement;
     private static backgroundSound: HTMLAudioElement;
-    private static engineSound: HTMLAudioElement;
-
-    public static playEngineSound(){
-        if(Application.state !== 'pause'){
-            this.engineSound = new Audio(PIXI.loader.resources['engineSound'].url);
-            this.engineSound.volume = 0.05;
-            this.engineSound.play();
-        }
-    }
 
     public static playMissleSound(){
         if(Application.state !== 'pause'){
@@ -66,6 +57,9 @@ export default class Sounds{
                 }
                 if(this.gameOverSound !== undefined && this.gameOverSound !== null){
                     this.gameOverSound.pause();
+                }
+                if(this.missleSound !== undefined && this.missleSound !== null){
+                    this.missleSound.pause();
                 }
                 break;
             case 'play':
