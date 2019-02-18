@@ -4,9 +4,9 @@ import Animation from './animation';
 
 export default class Menu {
 
-    public buttons: Array<PIXI.Sprite>;
+    public static buttons: Array<PIXI.Sprite>;
 
-    public init(app: PIXI.Application): void {
+    public static init(app: PIXI.Application): void {
         app.stage.removeChildren();
 
         this.loadBackground(app);
@@ -16,17 +16,17 @@ export default class Menu {
         Animation.moon(app);
     }
 
-    private loadLogo(app: PIXI.Application): void {
+    private static loadLogo(app: PIXI.Application): void {
         let logo = new PIXI.Sprite(PIXI.loader.resources['logo-new'].texture);
 
-        logo.position.set(445, 110);
+        logo.position.set(410, 110);
 
         logo.scale.set(0.45);
 
         app.stage.addChild(logo);
     }
 
-    private loadButtons(app: PIXI.Application): void {
+    private static loadButtons(app: PIXI.Application): void {
         this.buttons = new Array();
 
         for (let i = 0; i < 4; i++) {
@@ -35,7 +35,7 @@ export default class Menu {
             button.anchor.set(0.5);
             button.scale.set(0.5);
 
-            button.position.set(app.view.width - button.width * 1.18, app.view.height / 2 + (i * 60))
+            button.position.set(app.view.width - button.width * 1.42, app.view.height / 2 + (i * 60))
 
             button.interactive = true;
 
@@ -61,7 +61,7 @@ export default class Menu {
         this.addBtnText(app);
     }
 
-    private addBtnText(app: PIXI.Application): void {
+    private static addBtnText(app: PIXI.Application): void {
         let text: PIXI.Text;
 
         for (let i = 0; i < 4; i++) {
@@ -84,7 +84,7 @@ export default class Menu {
         }
     }
 
-    private loadBackground(app: PIXI.Application): void {
+    private static loadBackground(app: PIXI.Application): void {
         let background = new PIXI.Sprite(PIXI.loader.resources['cosmos'].texture);
 
         background.width = 800;

@@ -3,7 +3,7 @@ import Application from "./application";
 
 export default class Panel {
 
-    public deactivatePauseBtn() {
+    public static deactivatePauseBtn() {
         Application.pauseBtn.interactive = false;
     }
 
@@ -37,7 +37,7 @@ export default class Panel {
         app.stage.addChild(pauseBtn);
     }
 
-    public showPanel(shouldShow: boolean, app: PIXI.Application): void {
+    public static showPanel(shouldShow: boolean, app: PIXI.Application): void {
         if (shouldShow === true) {
 
             Application.panel = new PIXI.Sprite(PIXI.loader.resources['panel'].texture);
@@ -72,7 +72,7 @@ export default class Panel {
         }
     }
 
-    private addPanelBtns(app: PIXI.Application): void {
+    private static addPanelBtns(app: PIXI.Application): void {
         let stopBtn = new PIXI.Sprite(PIXI.loader.resources['stopBtn'].texture);
 
         stopBtn.setParent(Application.panel);

@@ -25,7 +25,7 @@ export default class Animation {
         app.stage.addChild(moon);
     }
 
-    public static missle(app: PIXI.Application) {
+    public static missle(app: PIXI.Application): void {
         if (Application.movementOn === true) {
             let frames: PIXI.Texture[] = new Array();
 
@@ -51,7 +51,7 @@ export default class Animation {
         }
     }
 
-    public static explode(player: Character, app: PIXI.Application) {
+    public static explode(player: Character, app: PIXI.Application): void {
         Sounds.playExplosionSound(0.2);
 
         Application.movementOn = false;

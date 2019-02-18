@@ -17,15 +17,11 @@ let appOptions: PIXI.ApplicationOptions = {
 };
 
 let app: PIXI.Application;
-let menu: Menu;
-let panel: Panel;
 
 startGame();
 
 function startGame(): void {
     app = new PIXI.Application(appOptions);
-    menu = new Menu();
-    panel = new Panel();
 
     document.getElementById('display').appendChild(app.view);
 
@@ -59,16 +55,21 @@ function startGame(): void {
 
     //show splash screen
     function splashReady(): void {
-        let splashScreen = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
+        let splashScreen: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
+
         app.stage.addChild(splashScreen);
 
         setTimeout(() => {
             app.ticker.add(function fadeOut() {
                 if (splashScreen.alpha > 0) {
+
                     splashScreen.alpha -= 0.03;
+
                 } else {
                     app.ticker.remove(fadeOut);
+
                     Application.state = 'menu';
+
                     app.ticker.add(gameLoop);
                 }
             });
@@ -79,9 +80,11 @@ function startGame(): void {
 function gameLoop(): void {
     Sounds.stopSounds();
     Sounds.playSounds();
+
     movements();
+
     if (Application.state === 'menu') {
-        menu.init(app);
+        Menu.init(app);
 
         Application.state = '';
     } if (Application.state === 'replay') {
@@ -103,7 +106,7 @@ function gameLoop(): void {
 
         Application.movementOn = false;
 
-        panel.showPanel(true, app);
+        Panel.showPanel(true, app);
 
         Application.shouldPause = false;
 
@@ -113,7 +116,7 @@ function gameLoop(): void {
 
         Application.movementOn = true;
 
-        panel.showPanel(false, app);
+        Panel.showPanel(false, app);
 
         Application.state = '';
     } else if (Application.state === 'stop') {
@@ -121,7 +124,7 @@ function gameLoop(): void {
 
         Application.movementOn = false;
 
-        panel.showPanel(false, app);
+        Panel.showPanel(false, app);
 
         Application.shouldPause = true;
 
@@ -137,11 +140,11 @@ function gameLoop(): void {
             Application.state = 'menu';
         }
     } else if (Application.state === 'gameOver') {
+        removeControl();
+        
         GameOver.display(app);
 
-        removeControl();
-
-        panel.deactivatePauseBtn();
+        Panel.deactivatePauseBtn();
 
         Application.isGameOver = true;
 
