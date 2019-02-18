@@ -32,7 +32,6 @@ function startGame(): void {
         .add('menuSound', 'resources/sounds/menu_background.mp3')
         .add('backgroundSound', 'resources/sounds/background-music.mp3')
         .add('gameOverSound', 'resources/sounds/game_over.mp3')
-        .add('engineSound', 'resources/sounds/engine_sound.mp3')
         .add('explosionSound', 'resources/sounds/explosion.mp3')
         .add('missleSound', 'resources/sounds/missle_shoot.mp3')
         .load(loaded);
