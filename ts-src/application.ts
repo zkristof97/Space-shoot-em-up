@@ -1,6 +1,8 @@
+import * as PIXI from 'pixi.js';
 import Character from "./Character";
 
 export default class Application{
+    
     public static state: string = '';
     public static panel: PIXI.Sprite;
     public static panelButtons: PIXI.Sprite[] = new Array();

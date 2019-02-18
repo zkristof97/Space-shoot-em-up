@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import Application from './application';
 import Animation from './animation';
 import Menu from './menu';
