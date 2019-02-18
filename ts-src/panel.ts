@@ -8,7 +8,7 @@ export default class Panel {
     }
 
     public static addPauseBtn(app: PIXI.Application): void {
-        let pauseBtn = new PIXI.Sprite(PIXI.loader.resources['pauseBtn'].texture);
+        let pauseBtn = new PIXI.Sprite(PIXI.loader.resources['images'].textures['pauseBtn.png']);
 
         pauseBtn.position.set(app.view.width - 15, app.view.height - 15);
 
@@ -40,7 +40,7 @@ export default class Panel {
     public static showPanel(shouldShow: boolean, app: PIXI.Application): void {
         if (shouldShow === true) {
 
-            Application.panel = new PIXI.Sprite(PIXI.loader.resources['panel'].texture);
+            Application.panel = new PIXI.Sprite(PIXI.loader.resources['images'].textures['panel.png']);
 
             Application.panel.position.set(app.view.width / 2, app.view.height / 2);
 
@@ -73,7 +73,7 @@ export default class Panel {
     }
 
     private static addPanelBtns(app: PIXI.Application): void {
-        let stopBtn = new PIXI.Sprite(PIXI.loader.resources['stopBtn'].texture);
+        let stopBtn = new PIXI.Sprite(PIXI.loader.resources['images'].textures['stopBtn.png']);
 
         stopBtn.setParent(Application.panel);
 
@@ -89,7 +89,7 @@ export default class Panel {
             Application.state = 'stop';
         });
 
-        let playBtn = new PIXI.Sprite(PIXI.loader.resources['playBtn'].texture);
+        let playBtn = new PIXI.Sprite(PIXI.loader.resources['images'].textures['playBtn.png']);
 
         playBtn.setParent(Application.panel);
 
@@ -105,7 +105,7 @@ export default class Panel {
             Application.state = 'unpause';
         });
 
-        let replayBtn = new PIXI.Sprite(PIXI.loader.resources['replayBtn'].texture);
+        let replayBtn = new PIXI.Sprite(PIXI.loader.resources['images'].textures['replayBtn.png']);
 
         replayBtn.setParent(Application.panel);
 

@@ -25,37 +25,21 @@ function startGame(): void {
 
     document.getElementById('display').appendChild(app.view);
 
-    PIXI.loader.add('splash-screen', 'resources/images/splash-screen4.png')
-        .add('background', 'resources/images/parallaxImgs.json')
-        .add('resources/images/moon.json')
-        .add('explosion', 'resources/images/explosion.json')
-        .add('logo', 'resources/images/logo-text.png')
-        .add('button', 'resources/images/button.png')
-        .add('starBg', 'resources/images/stars.png')
-        .add('images', 'resources/images/sprites.json')
-        .add('game-over', 'resources/images/game-over.png')
-        .add('resources/images/circle.png')
-        .add('pauseBtn', 'resources/images/pauseBtn.png')
-        .add('panel', 'resources/images/panel.png')
-        .add('stopBtn', 'resources/images/stopBtn.png')
-        .add('playBtn', 'resources/images/playBtn.png')
-        .add('replayBtn', 'resources/images/replayBtn.png')
-        .add('missles', 'resources/images/missles.json')
+    PIXI.loader
+        //load all the images
+        .add('images', 'resources/images/images.json')
+        //load sound effects
         .add('menuSound', 'resources/sounds/menu_background.mp3')
         .add('backgroundSound', 'resources/sounds/background-music.mp3')
         .add('gameOverSound', 'resources/sounds/game_over.mp3')
         .add('engineSound', 'resources/sounds/engine_sound.mp3')
         .add('explosionSound', 'resources/sounds/explosion.mp3')
         .add('missleSound', 'resources/sounds/missle_shoot.mp3')
-        .add('soundOn', 'resources/images/sound_on.png')
-        .add('soundOff', 'resources/images/sound_off.png')
-        .add('cosmos', 'resources/images/cosmos-bg.png')
-        .add('logo-new', 'resources/images/logo.png')
-        .load(splashReady);
+        .load(loaded);
 
     //show splash screen
-    function splashReady(): void {
-        let splashScreen: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
+    function loaded(): void {
+        let splashScreen: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['images'].textures['splash-screen.png']);
 
         app.stage.addChild(splashScreen);
 
@@ -79,7 +63,7 @@ function startGame(): void {
 
 function gameLoop(): void {
     Sounds.stopSounds();
-    Sounds.playSounds();
+    Sounds.playSounds(); 
 
     Movement.start(app);
 

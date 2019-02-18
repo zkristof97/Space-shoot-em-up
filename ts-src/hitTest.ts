@@ -41,7 +41,7 @@ export default class HitTest{
     };
 
     public static isCollide(missle: PIXI.Rectangle, enemy: PIXI.Rectangle): boolean {
-        return missle.x + missle.width / 2 >= enemy.x && missle.x <= enemy.x + enemy.width && missle.y + missle.height >= enemy.y && missle.y <= enemy.y + enemy.height;
+        return missle.x + missle.width / 6 >= enemy.x && missle.x <= enemy.x + enemy.width && missle.y + missle.height >= enemy.y && missle.y <= enemy.y + enemy.height;
     }
 
     public static detectCollision(player: Character, enemy: PIXI.Sprite, app:PIXI.Application): void {

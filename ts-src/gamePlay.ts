@@ -95,7 +95,7 @@ export default class GamePlay {
     }
 
     private static createPlayer(app: PIXI.Application) {
-        Application.player = new Character(PIXI.loader.resources['images'].textures['spaceship.png']);
+        Application.player = new Character(PIXI.loader.resources['images'].textures['craft.png']);
 
         Application.player.position.set(75, app.view.height / 2);
 
@@ -130,6 +130,7 @@ export default class GamePlay {
 
     public static checkTargetHit(missle: PIXI.Sprite, enemy: PIXI.Sprite, app: PIXI.Application) {
         if (HitTest.isCollide(missle.getBounds(), enemy.getBounds()) === true) {
+            debugger;
             Sounds.playExplosionSound(0.05);
 
             app.stage.removeChild(missle);
@@ -155,7 +156,7 @@ export default class GamePlay {
 
         for (let i = 0; i < enemy.height; i += 5) {
             for (let j = 0; j < enemy.width; j += 5) {
-                let particle = new PIXI.Sprite(PIXI.loader.resources['resources/images/circle.png'].texture);
+                let particle = new PIXI.Sprite(PIXI.loader.resources['images'].textures['circle.png']);
 
                 particle.position.set(j, i);
 
