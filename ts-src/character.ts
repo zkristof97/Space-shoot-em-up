@@ -1,6 +1,7 @@
-import { Sprite } from "pixi.js";
+import * as PIXI from 'pixi.js';
 
-export default class Character extends Sprite{
+export default class Character extends PIXI.Sprite{
+    
     constructor(texture: PIXI.Texture) {
         super(texture);
     }

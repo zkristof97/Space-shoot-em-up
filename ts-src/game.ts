@@ -1,11 +1,12 @@
+import * as PIXI from 'pixi.js';
 import Application from './application';
-import Animation from './animation';
 import Menu from './menu';
 import Panel from './panel';
 import GameOver from './gameOver';
 import GamePlay from './gamePlay';
-import HitTest from './hitTest';
 import Sounds from './sound';
+import Movement from './movement';
+import Control from './control';
 
 let appOptions: PIXI.ApplicationOptions = {
     width: 800,
@@ -16,15 +17,11 @@ let appOptions: PIXI.ApplicationOptions = {
 };
 
 let app: PIXI.Application;
-let menu: Menu;
-let panel: Panel;
 
 startGame();
 
-function startGame() {
+function startGame(): void {
     app = new PIXI.Application(appOptions);
-    menu = new Menu();
-    panel = new Panel();
 
     document.getElementById('display').appendChild(app.view);
 
@@ -56,17 +53,23 @@ function startGame() {
         .add('logo-new', 'resources/images/logo.png')
         .load(splashReady);
 
-    function splashReady() {
-        let splashScreen = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
+    //show splash screen
+    function splashReady(): void {
+        let splashScreen: PIXI.Sprite = new PIXI.Sprite(PIXI.loader.resources['splash-screen'].texture);
+
         app.stage.addChild(splashScreen);
 
         setTimeout(() => {
             app.ticker.add(function fadeOut() {
                 if (splashScreen.alpha > 0) {
+
                     splashScreen.alpha -= 0.03;
+
                 } else {
                     app.ticker.remove(fadeOut);
+
                     Application.state = 'menu';
+
                     app.ticker.add(gameLoop);
                 }
             });
@@ -74,178 +77,81 @@ function startGame() {
     }
 }
 
-function gameLoop() {
+function gameLoop(): void {
     Sounds.stopSounds();
     Sounds.playSounds();
-    movements();
+
+    Movement.start(app);
+
     if (Application.state === 'menu') {
-        menu.init(app);
+        Menu.init(app);
+
         Application.state = '';
     } if (Application.state === 'replay') {
-        Application.score = 0;
         GamePlay.noEnemySpawn();
+
         Application.movementOn = false;
+
         Application.state = 'play';
     } else if (Application.state === 'play') {
+        Control.enable(app);
+
+        GamePlay.initPlay(app);
+
         Application.movementOn = true;
-        app.stage.removeChildren();
-        GamePlay.initBackground(app);
-        addControl();
-        GamePlay.addScoreLabel(app);
-        Application.movementOn = true;
-        panel.addPauseBtn(app);
-        GamePlay.spawnEnemy(app);
-        GamePlay.createPlayer(app);
+
         Application.state = '';
     } else if (Application.state === 'pause') {
-        Application.shouldPause = false;
-        panel.showPanel(true, app);
         GamePlay.noEnemySpawn();
+
         Application.movementOn = false;
+
+        Panel.showPanel(true, app);
+
+        Application.shouldPause = false;
+
         Application.state = '';
     } else if (Application.state === 'unpause') {
-        Application.movementOn = true;
-        panel.showPanel(false, app);
         GamePlay.spawnEnemy(app);
+
+        Application.movementOn = true;
+
+        Panel.showPanel(false, app);
+
         Application.state = '';
     } else if (Application.state === 'stop') {
-        Application.score = 0;
-        Application.shouldPause = true;
-        panel.showPanel(false, app);
-        Application.movementOn = false;
         GamePlay.noEnemySpawn();
-        Application.missles = new Array();
-        Application.enemies = new Array();
-        Application.doExplosion = true;
+
+        Application.movementOn = false;
+
+        Panel.showPanel(false, app);
+
+        Application.shouldPause = true;
+
         if (Application.isReplay === true) {
             Application.isReplay = false;
+
             Application.state = 'play';
-        } else if (Application.isGameOver === false) {
-            Application.state = 'menu';
-        } else {
+        } else if (Application.isGameOver === true) {
             Application.isGameOver = false;
+
             Application.state = '';
+        } else {
+            Application.state = 'menu';
         }
     } else if (Application.state === 'gameOver') {
-        removeControl();
-        Application.movementOn = false;
-        Application.isGameOver = true;
-        panel.deactivatePauseBtn();
+        Control.disable();
+
         GameOver.display(app);
+
+        Panel.deactivatePauseBtn();
+
+        Application.isGameOver = true;
+
         Application.state = 'stop';
     } else if (Application.state === 'exit') {
         window.location.replace('https://www.google.com/');
+
         Application.state = '';
-    }
-}
-
-function addControl() {
-    window.addEventListener('keydown', keyDownHandler);
-    window.addEventListener('keyup', keyUpHandler);
-}
-
-function removeControl(){
-    window.removeEventListener('keydown', keyDownHandler);
-    window.removeEventListener('keyup', keyUpHandler);
-}
-
-function movements() {
-    if(Application.movementOn === true){
-        backgroundMovement();
-        playerMovement();
-        enemyMovement();
-        missleMovement();
-    }
-}
-
-function backgroundMovement(){
-    for(let i = 0; i < GamePlay.parallaxImgs.length; i++){
-        GamePlay.parallaxImgs[i].tilePosition.x -= GamePlay.parallaxImgs[i].velocity;
-    }
-}
-
-function playerMovement() {
-    Application.player.x += Application.player.velocityX;
-    Application.player.y += Application.player.velocityY;
-    
-    GamePlay.checkPosition(5, 4, app);
-}
-
-function enemyMovement() {
-    for (let i = Application.enemies.length - 1; i >= 0; i--) {
-        let currentEnemy = Application.enemies[i];
-        currentEnemy.x -= 4;
-
-        HitTest.detectCollision(Application.player, currentEnemy, app);
-
-        if (currentEnemy.x <= 0 - currentEnemy.width / 2) {
-            Application.enemies = Application.enemies.filter(e => e !== currentEnemy);
-            app.stage.removeChild(currentEnemy);
-        }
-    }
-}
-
-function missleMovement() {
-    for (let i = Application.missles.length - 1; i >= 0; i--) {
-        let currentMissle: PIXI.Sprite = Application.missles[i];
-        currentMissle.x += 7;
-
-        for(let j = 0; j < Application.enemies.length; j++){
-            if (currentMissle !== null && currentMissle !== undefined && Application.enemies[j] !== null && Application.enemies[j] !== undefined) {
-                GamePlay.checkTargetHit(currentMissle, Application.enemies[j], app);
-            }        
-        }
-
-        if (currentMissle.x > app.view.width) {
-            Application.missles = Application.missles.filter(m => m !== currentMissle);
-        }
-    }
-}
-
-function keyUpHandler(e: KeyboardEvent): void {
-    switch (e.key) {
-        case ' ':
-            Application.canShoot = true;
-            break;
-        case 'ArrowLeft':
-            Application.player.velocityX = 0;
-            break;
-        case 'ArrowUp':
-            Application.player.velocityY = 0;
-            break;
-        case 'ArrowRight':
-            Application.player.velocityX = 0;
-            break;
-        case 'ArrowDown':
-            Application.player.velocityY = 0;
-            break;
-    }
-}
-
-function keyDownHandler(e: KeyboardEvent) {
-    let speed = 5;
-    switch (e.key) {
-        case ' ':
-            if (Application.canShoot === true) {
-                Animation.missle(app);
-                Application.canShoot = false;
-            }
-            break;
-        case 'ArrowLeft':
-            Application.player.velocityX = -speed;
-            Sounds.playEngineSound();
-            break;
-        case 'ArrowUp':
-            Application.player.velocityY = -speed;
-            Sounds.playEngineSound();
-            break;
-        case 'ArrowRight':
-            Application.player.velocityX = speed;
-            Sounds.playEngineSound();
-            break;
-        case 'ArrowDown':
-            Application.player.velocityY = speed;
-            Sounds.playEngineSound();
-            break;
     }
 }
