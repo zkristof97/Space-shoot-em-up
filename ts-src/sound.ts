@@ -8,7 +8,7 @@ export default class Sounds {
     private static explosionSound: HTMLAudioElement;
     private static backgroundSound: HTMLAudioElement;
 
-    public static playMissleSound() {
+    public static playMissleSound(): void {
         this.missleSound = new Audio(PIXI.loader.resources['missleSound'].url);
 
         this.missleSound.volume = 0.2;
@@ -24,7 +24,8 @@ export default class Sounds {
         this.explosionSound.play();
     }
 
-    public static playSounds() {
+    //sound is playing according to the current game state
+    public static playSounds(): void {
         switch (Application.state) {
             case 'menu':
                 this.menuSound = new Audio(PIXI.loader.resources['menuSound'].url);

@@ -4,6 +4,7 @@ import Animation from './animation';
 
 export default class Control {
 
+    //enable keyboard control
     public static enable(app: PIXI.Application): void {
         window.onkeydown = (e: KeyboardEvent) => {
             Control.keyDownHandler(e, app);
@@ -14,6 +15,7 @@ export default class Control {
         };
     }
 
+    //disable keyboard control
     public static disable(): void {
         window.onkeydown = null;
         window.onkeyup = null;

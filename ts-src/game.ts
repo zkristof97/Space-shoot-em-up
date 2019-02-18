@@ -61,6 +61,7 @@ function startGame(): void {
     }
 }
 
+//our game loop that handles the state changes and behaves accordingly
 function gameLoop(): void {
     Sounds.stopSounds();
     Sounds.playSounds(); 
@@ -84,13 +85,15 @@ function gameLoop(): void {
 
         Application.movementOn = true;
 
+        Movement.enemySpeed = 4;
+
         Application.state = '';
     } else if (Application.state === 'pause') {
         GamePlay.noEnemySpawn();
 
         Application.movementOn = false;
 
-        Panel.showPanel(true, app);
+        Panel.showPanel(app);
 
         Application.shouldPause = false;
 
@@ -100,7 +103,7 @@ function gameLoop(): void {
 
         Application.movementOn = true;
 
-        Panel.showPanel(false, app);
+        Panel.hidePanel(app);
 
         Application.state = '';
     } else if (Application.state === 'stop') {
@@ -108,7 +111,7 @@ function gameLoop(): void {
 
         Application.movementOn = false;
 
-        Panel.showPanel(false, app);
+        Panel.hidePanel(app);
 
         Application.shouldPause = true;
 
