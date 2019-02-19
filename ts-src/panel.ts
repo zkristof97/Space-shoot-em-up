@@ -75,8 +75,6 @@ export default class Panel {
 
     //adds the buttons that are displayed on the panel
     private static addPanelBtns(app: PIXI.Application): void {
-        Application.panelButtons = new Array();
-
         let stopBtn = new PIXI.Sprite(PIXI.loader.resources['images'].textures['stopBtn.png']);
 
         stopBtn.setParent(Application.panel);

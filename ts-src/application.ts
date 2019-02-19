@@ -7,7 +7,7 @@ export default class Application {
 
     public static pauseBtn: PIXI.Sprite;
     public static panel: PIXI.Sprite;
-    public static panelButtons: PIXI.Sprite[];
+    public static panelButtons: PIXI.Sprite[] = new Array();
     public static shouldPause: boolean = true;
 
     public static intervalId: number = 0;
