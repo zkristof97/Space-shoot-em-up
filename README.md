@@ -1,4 +1,4 @@
-Space shoot'em up game that I have made in under 9 days using TypeScript and Pixi.js only.
+Space shoot'em up game that I have made in under 2 weeks using TypeScript and Pixi.js only.
 
 When the menu appears, you can select either Game1, Game2 or Game3 to start the game, but selecting any of them will 
 take you to the same playground, they are just there to set the state of the game. 
